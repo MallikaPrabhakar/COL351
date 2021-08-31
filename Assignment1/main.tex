@@ -1,22 +1,19 @@
 % --.---.---.---.---.---.---.---.---.---.---.---.---.---.---.---.---.---.---.---.---.---.--
 % --.---.---.---.---.---.---.---.---.---.---.---.---.---.---.---.---.---.---.---.---.---.--
 \documentclass[12pt]{article}
-\usepackage[a4paper, total={6in, 9in}]{geometry}
+\usepackage[total={6.5in, 9in}]{geometry}
 \usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 \usepackage{hyperref}
-\hypersetup{
-    colorlinks=true,
-    linkcolor=darkcyan,
-    filecolor=darkcerulean,      
-    urlcolor=magenta
-    }
+\hypersetup{colorlinks=true,linkcolor=darkcyan,filecolor=darkcerulean,urlcolor=magenta}
 
 %for proof
 \usepackage{amsmath}
 \usepackage{amsthm}
 
 %for code
-\usepackage{tcolorbox}
+\usepackage[most]{tcolorbox}
 %\usepackage{minted}
 %\usemintedstyle{emacs}
 %\usemintedstyle{monokai}
@@ -29,6 +26,13 @@
 
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{claim}[theorem]{Claim}
+\newtheorem*{question}{Question}
+
+\renewcommand\thesubsection{\thesection.\alph{subsection}}
+
+\newtcolorbox{solution}[2][]{breakable,enhanced,adjusted title={#2},colback=codegray,colframe=codegray!50!black}
+
+\linespread{1.0}
 
 \definecolor{codegray}{rgb}{0.98,0.97,0.93}
 \definecolor{cottoncandy}{rgb}{1.0, 0.74, 0.85}
@@ -53,11 +57,12 @@
 
 \section{Question 1}
 
+Let $G$ be an edge-weighted graph with $n$ vertices and $m$ edges satisfying the condition that all the edge weights in $G$ are distinct.
 % --.---.---.---.---.---.---.---.---.---.---.---.---.---.---.---.---.---.---.---.---.---.--
 
-\subsection{one point one}
+\subsection{Unique MST}
 
-% --.---.---.---.---.---.---.---.---.---.---.---.---.---.---.---.---.---.---.---.---.---.--
+\input{1a}
 
 \subsection{one point two}
 
