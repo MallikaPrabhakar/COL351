@@ -47,7 +47,9 @@
         \begin{claim}[]
             $e_0$ cannot be in $T'$
         \end{claim}
-        This is because, if $e_0$ were in $T'$, then $T\setminus\{e_0\}\neq T'\setminus\{e_0\}$ and thus, there would be two different MSTs for $H$ which would be a contradiction to our assumption. Thus, $e_0\notin T'$.\\
+        \begin{proof}
+            This is because, if $e_0$ were in $T'$, then $T\setminus\{e_0\}\neq T'\setminus\{e_0\}$ and thus, there would be two different MSTs for $H$ which would be a contradiction to our assumption. Thus, $e_0\notin T'$.
+        \end{proof}
         Consider the path from $x$ to $y$ in $T'$. Since $e_0=(x, y)$ is not present in $T'$, there exists a different path, say $P=(f_1,f_2\cdots,f_k)$ where $f_i\in E(T'), 1\leq i \leq k$. We know that $wt(f_i) > wt(e_0), 1 \leq i \leq k$.\\
         Swap any of the $f_i$ with $e_0$ and let the subgraph formed be $T''$, i.e., $T''=T'\setminus\{f_i\}\cup\{e_0\}$. We know $T''$ is a spanning tree of $G$ since $V(T'')=V(G)$ and there are no cycles formed on performing the swap operation (this can be proven using contradiction as discussed in the lecture).\\
         Now, consider the weight of $T''$:
@@ -57,9 +59,9 @@
                 \implies wt(T'') &< wt(T')
             \end{split}
         \end{equation}
-        We have shown that the total weight of $T''$ is lesser than the weight of $T'$. However, this is a contradiction to the fact that $T'$ is the MST of $G$. Thus our assumption that $T_G$ is not the unique MST of $G$ was wrong.Therefore, $h(n)$ is true.\\
+        We have shown that the total weight of $T''$ is lesser than the weight of $T'$. However, this is a contradiction to the fact that $T'$ is the MST of $G$. Thus our assumption that $T_G$ is not the unique MST of $G$ was wrong. Therefore, $h(n)$ is true.\\
 
-        This completes the induction and the proof that \textit{if all edges in a graph are distinct, then its MST is unique}.
+        This completes the induction and the proof that \textit{if all edge weights in a graph are distinct, then its MST is unique}.
         %        Consider the edge $e_0=(x, y)$ such that $\forall\ e\in\ E, wt(e_0) < wt(e)$ (equality cannot hold since all edges are of distinct weight).\\
         %        Now merge the two vertices $x,y$ into a single vertex $z$, and define
         %        \begin{equation}
@@ -81,4 +83,3 @@
         %        It is easy to see that $|V'|=n-1$ and hence from induction, we know that $MST(G')$ is unique. Call it $T'=(V', E_{T'})$. Construct $T=(V, E_T)$ from $T'$ as follows:
     \end{proof}
 \end{solution}
-
