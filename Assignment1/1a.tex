@@ -65,24 +65,5 @@
         We have shown that the total weight of $T''$ is lesser than the weight of $T'$. However, this is a contradiction to the fact that $T'$ is the MST of $G$. Thus our assumption that $T_G$ is not the unique MST of $G$ was wrong. Therefore, $h(n)$ is true.\\
 
         This completes the induction and the proof that \textit{if all edge weights in a graph are distinct, then its MST is unique}.
-        %        Consider the edge $e_0=(x, y)$ such that $\forall\ e\in\ E, wt(e_0) < wt(e)$ (equality cannot hold since all edges are of distinct weight).\\
-        %        Now merge the two vertices $x,y$ into a single vertex $z$, and define
-        %        \begin{equation}
-        %            \begin{split}
-        %                V'&=V\setminus \{x, y\}\cup\{z\}\\
-        %                E'&=E\setminus \{e\ |\ \exists\ v\in V:\ e=(v, x)\vee e=(v, y), e\in E\} \cup \{(v, z)\ |\ \exists\ (v, x)\vee (v, y)\in E\}\\
-        %                G'&=(V', E')
-        %            \end{split}
-        %        \end{equation}
-        %        Also, for each edge $e=(v, u)\in E'$, define $wt(e)$ as:
-        %        \begin{equation}
-        %            wt(e)=\left\{
-        %                \begin{array}{ll}
-        %                    wt(e) & e\in E\\
-        %                    \min(wt(v, x), wt(v, y)) & e\notin E\wedge (u=x\vee u=y)
-        %                \end{array}
-        %                \right.
-        %        \end{equation}
-        %        It is easy to see that $|V'|=n-1$ and hence from induction, we know that $MST(G')$ is unique. Call it $T'=(V', E_{T'})$. Construct $T=(V, E_T)$ from $T'$ as follows:
     \end{proof}
 \end{solution}
