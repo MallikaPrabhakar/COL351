@@ -4,6 +4,64 @@
     \end{question}
     \tcblower{}
     \begin{proof}[Solution]
+        The idea is to use the previous result along with the fact that the number of edges to be removed to form a spanning tree is atmost $(n+8)-(n-1)=9$, assuming that $G$ was initially connected (else no MST exists). The algorithm is as follows:
+        \begin{algorithm}[H]
+            \caption{Compute MST for 1.b}
+            \begin{algorithmic}[1]
+                \Procedure{MST}{$G$}
+                    \If{$|E(G)|$ equals $|V(G)|-1$}
+                        \State{\Return{$G$}}    \Comment{since $G$ is acyclic and hence a tree}
+                    \EndIf{}
+                    \State{$C\gets {findCycle}(G)$}
+                    \State{$e\gets$ edge with largest weight in $C$}
+                    \State{remove $e$ from $G$}
+                    \State{$T_G\gets MST(G)$}
+                    \State{\Return{$T_G$}}
+                \EndProcedure{}
+            \end{algorithmic}
+        \end{algorithm}
+        
+        The procedure \textit{findCycle} calls a DFS function on $G$ which uses graph colouring and returns the first cycle it finds:
+        \begin{algorithm}[H]
+            \caption{$findCycle$}
+            \begin{algorithmic}[1]
+                \Procedure{findCycle}{$G$}
+                    \State{$v\gets$ any vertex of $G$}
+                    \State{$\text{colour}\gets$ map of vertices initialised to zero}
+                    \State{$\text{parent}\gets$ map of vertices initialised to \texttt{null}}
+                    \State{$(u, v)\gets \text{dfs}(G, v, \text{colour}, \text{parent}, \mathtt{null})$}
+                    \State{\Comment{returns the \textit{bottommost and topmost} vertex of the cycle}}
+                    \State{$C\gets$ empty array of edges}
+                    \State{add $(u, v)$ to $C$}
+                    \While{$u\neq v$}
+                        \State{add $(u, \text{parent}(u))$ to $C$}
+                        \State{$u\gets \text{parent}(u)$}
+                    \EndWhile{}
+                    \State{\Return{$C$}}
+                \EndProcedure{}
+            \end{algorithmic}
+        \end{algorithm}
 
+        The \textit{DFS} function looks as follows:
+        \begin{algorithm}[H]
+            \caption{Identify cycle using colouring and DFS}
+            \begin{algorithmic}[1]
+                \Procedure{DFS}{$G, v, \text{colour}, \text{parent}, p$}
+                    \State{$\text{parent}(v)\gets p$}
+                    \State{$\text{colour}(v)\gets 1$}
+                    \ForAll{$u$ such that $u$ is neighbour of $v$ in $G$}
+                        \If{$\text{colour}(u)$ is $2$}
+                            \State{\Return{$(u, v)$}}
+                        \ElsIf{$\text{colour}(u)$ is 0}
+                            \State{$\text{value}\gets\text{dfs}(G, u, \text{colour}, \text{parent}, v)$}
+                            \If{$\text{value}$ is not \texttt{null}}
+                            \State{\Return{value}}
+                            \EndIf{}
+                        \EndIf{}
+                    \EndFor{}
+                    \State{$\text{colour}(v)\gets 2$}
+                \EndProcedure{}
+            \end{algorithmic}
+        \end{algorithm}
     \end{proof}
 \end{solution}

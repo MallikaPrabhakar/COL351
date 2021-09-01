@@ -20,27 +20,30 @@
         \begin{algorithm}[H]
             \caption{Recursive MST Routine -- Kruskal's algorithm} % chktex 8
             \begin{algorithmic}[1]
-                \State{$e_0\gets (x, y)$ be edge with least weight}
-                \State{$H\gets G$}
-                \State{remove $x, y$ from $H$ and add new vertex $z$}
-                \ForAll{$v$ such that $v$ is neighbour of $x$ or $y$}
-                    \State{add $(v, z)$ to $H$}
-                    \State{$wt(v, z)\gets\min(wt(v, x), wt(v, y))$}
-                    \If{$wt(v, x) < wt(v, y)$}
-                        \State{$map(v, z)\gets (v, x)$}
-                    \Else{}
-                        \State{$map(v, z)\gets (v, y)$}
-                    \EndIf{}
-                \EndFor{}
-                \State{$T_H\gets MST(H)$}
-                \State{$T_G\gets (V, \{e_0\})$}
-                \ForAll{$e\in T_H$}
-                    \If{$e$ is not incident on $z$}
-                        \State{add $e$ to $T_G$}
-                    \Else{}
-                        \State{add $map(e)$ to $T_G$}
-                    \EndIf{}
-                \EndFor{}
+                \Procedure{MST}{$G$}
+                    \State{$e_0\gets (x, y)$ be edge with least weight}
+                    \State{$H\gets G$}
+                    \State{remove $x, y$ from $H$ and add new vertex $z$}
+                    \ForAll{$v$ such that $v$ is neighbour of $x$ or $y$}
+                        \State{add $(v, z)$ to $H$}
+                        \State{$wt(v, z)\gets\min(wt(v, x), wt(v, y))$}
+                        \If{$wt(v, x) < wt(v, y)$}
+                            \State{$map(v, z)\gets (v, x)$}
+                        \Else{}
+                            \State{$map(v, z)\gets (v, y)$}
+                        \EndIf{}
+                    \EndFor{}
+                    \State{$T_H\gets MST(H)$}
+                    \State{$T_G\gets (V, \{e_0\})$}
+                    \ForAll{$e\in T_H$}
+                        \If{$e$ is not incident on $z$}
+                            \State{add $e$ to $T_G$}
+                        \Else{}
+                            \State{add $map(e)$ to $T_G$}
+                        \EndIf{}
+                    \EndFor{}
+                    \State{\Return{$T_G$}}
+                \EndProcedure{}
             \end{algorithmic}
         \end{algorithm}
         In the above algorithm, it is clear that $H$ has $n-1$ vertices. Thus, by our assumption, $h(n-1)$ is true and hence $T_H$ is unique. Also, we know that $T_G$ is a valid MST, from the correctness of Kruskal's algorithm. Now, assume by contradiction that $T_G$ is not unique. Then there exists an MST, say $T'\neq T_G$.
