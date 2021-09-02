@@ -4,7 +4,7 @@
 
 from sortedcontainers import sortedset
 
-def adjList(vertices, edges):
+def adjList(vertices, edges):   # O(m)
     graph=dict()
     print("graph blank initialised")
     for i in vertices:
@@ -16,9 +16,10 @@ def adjList(vertices, edges):
     print("graph ready")
     return(graph)
 
-def deletePerson(person,graph,vertices):
+def deletePerson(person,graph,vertices): # O(d_i * log(n))
     for neighbour in graph[person]:
         graph[neighbour].remove(person)
+        # remove neighbour from BST and re-add with reduced degree
         if len(graph[neighbour]) == 0:
             del graph[neighbour]
     del graph[person]
