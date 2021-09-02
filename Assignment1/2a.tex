@@ -1,0 +1,22 @@
+\begin{solution}{Question 1.b}
+    \begin{question}[]
+        What is the optimal binary Huffman encoding for $n$ letters whose frequencies are the first $n$ Fibonacci numbers? What will be the encoding of the two letters with frequency $1$, in the optimal binary Huffman encoding?
+    \end{question}
+    \tcblower{}
+    \begin{proof}[Solution]
+        We begin by observing the property of Fibonacci numbers:
+        \begin{equation}
+            \begin{split}
+                f(n)&=f(n-1)+f(n-2)\ \forall n\geq 3\\
+                \text{and, } f(1)&=f(2)=1
+            \end{split}
+        \end{equation}
+        Now, consider an alphabet $A=(a_1, a_2, \ldots,a_n)$ such that it has a frequency vector $V=(1, 1, \ldots, f(n))$. We have the following claim for such a situation:
+        \begin{claim}
+            The Huffman tree is unique and $a_n$ gets encoded using a single bit.
+        \end{claim}
+        \begin{proof}
+            We will prove the claim using induction on $n$.
+        \end{proof}
+    \end{proof}
+\end{solution}

@@ -20,34 +20,39 @@
         \begin{algorithm}[H]
             \caption{Recursive MST Routine -- Kruskal's algorithm} % chktex 8
             \begin{algorithmic}[1]
-                \State{$e_0\gets (x, y)$ be edge with least weight}
-                \State{$H\gets G$}
-                \State{remove $x, y$ from $H$ and add new vertex $z$}
-                \ForAll{$v$ such that $v$ is neighbour of $x$ or $y$}
-                    \State{add $(v, z)$ to $H$}
-                    \State{$wt(v, z)\gets\min(wt(v, x), wt(v, y))$}
-                    \If{$wt(v, x) < wt(v, y)$}
-                        \State{$map(v, z)\gets (v, x)$}
-                    \Else{}
-                        \State{$map(v, z)\gets (v, y)$}
-                    \EndIf{}
-                \EndFor{}
-                \State{$T_H\gets MST(H)$}
-                \State{$T_G\gets (V, \{e_0\})$}
-                \ForAll{$e\in T_H$}
-                    \If{$e$ is not incident on $z$}
-                        \State{add $e$ to $T_G$}
-                    \Else{}
-                        \State{add $map(e)$ to $T_G$}
-                    \EndIf{}
-                \EndFor{}
+                \Procedure{MST}{$G$}
+                    \State{$e_0\gets (x, y)$ be edge with least weight}
+                    \State{$H\gets G$}
+                    \State{remove $x, y$ from $H$ and add new vertex $z$}
+                    \ForAll{$v$ such that $v$ is neighbour of $x$ or $y$}
+                        \State{add $(v, z)$ to $H$}
+                        \State{$wt(v, z)\gets\min(wt(v, x), wt(v, y))$}
+                        \If{$wt(v, x) < wt(v, y)$}
+                            \State{$map(v, z)\gets (v, x)$}
+                        \Else{}
+                            \State{$map(v, z)\gets (v, y)$}
+                        \EndIf{}
+                    \EndFor{}
+                    \State{$T_H\gets MST(H)$}
+                    \State{$T_G\gets (V, \{e_0\})$}
+                    \ForAll{$e\in T_H$}
+                        \If{$e$ is not incident on $z$}
+                            \State{add $e$ to $T_G$}
+                        \Else{}
+                            \State{add $map(e)$ to $T_G$}
+                        \EndIf{}
+                    \EndFor{}
+                    \State{\Return{$T_G$}}
+                \EndProcedure{}
             \end{algorithmic}
         \end{algorithm}
         In the above algorithm, it is clear that $H$ has $n-1$ vertices. Thus, by our assumption, $h(n-1)$ is true and hence $T_H$ is unique. Also, we know that $T_G$ is a valid MST, from the correctness of Kruskal's algorithm. Now, assume by contradiction that $T_G$ is not unique. Then there exists an MST, say $T'\neq T_G$.
         \begin{claim}[]
             $e_0$ cannot be in $T'$
         \end{claim}
-        This is because, if $e_0$ were in $T'$, then $T\setminus\{e_0\}\neq T'\setminus\{e_0\}$ and thus, there would be two different MSTs for $H$ which would be a contradiction to our assumption. Thus, $e_0\notin T'$.\\
+        \begin{proof}
+            This is because, if $e_0$ were in $T'$, then $T\setminus\{e_0\}\neq T'\setminus\{e_0\}$ and thus, there would be two different MSTs for $H$ which would be a contradiction to our assumption. Thus, $e_0\notin T'$.
+        \end{proof}
         Consider the path from $x$ to $y$ in $T'$. Since $e_0=(x, y)$ is not present in $T'$, there exists a different path, say $P=(f_1,f_2\cdots,f_k)$ where $f_i\in E(T'), 1\leq i \leq k$. We know that $wt(f_i) > wt(e_0), 1 \leq i \leq k$.\\
         Swap any of the $f_i$ with $e_0$ and let the subgraph formed be $T''$, i.e., $T''=T'\setminus\{f_i\}\cup\{e_0\}$. We know $T''$ is a spanning tree of $G$ since $V(T'')=V(G)$ and there are no cycles formed on performing the swap operation (this can be proven using contradiction as discussed in the lecture).\\
         Now, consider the weight of $T''$:
@@ -57,28 +62,8 @@
                 \implies wt(T'') &< wt(T')
             \end{split}
         \end{equation}
-        We have shown that the total weight of $T''$ is lesser than the weight of $T'$. However, this is a contradiction to the fact that $T'$ is the MST of $G$. Thus our assumption that $T_G$ is not the unique MST of $G$ was wrong.Therefore, $h(n)$ is true.\\
+        We have shown that the total weight of $T''$ is lesser than the weight of $T'$. However, this is a contradiction to the fact that $T'$ is the MST of $G$. Thus our assumption that $T_G$ is not the unique MST of $G$ was wrong. Therefore, $h(n)$ is true.\\
 
-        This completes the induction and the proof that \textit{if all edges in a graph are distinct, then its MST is unique}.
-        %        Consider the edge $e_0=(x, y)$ such that $\forall\ e\in\ E, wt(e_0) < wt(e)$ (equality cannot hold since all edges are of distinct weight).\\
-        %        Now merge the two vertices $x,y$ into a single vertex $z$, and define
-        %        \begin{equation}
-        %            \begin{split}
-        %                V'&=V\setminus \{x, y\}\cup\{z\}\\
-        %                E'&=E\setminus \{e\ |\ \exists\ v\in V:\ e=(v, x)\vee e=(v, y), e\in E\} \cup \{(v, z)\ |\ \exists\ (v, x)\vee (v, y)\in E\}\\
-        %                G'&=(V', E')
-        %            \end{split}
-        %        \end{equation}
-        %        Also, for each edge $e=(v, u)\in E'$, define $wt(e)$ as:
-        %        \begin{equation}
-        %            wt(e)=\left\{
-        %                \begin{array}{ll}
-        %                    wt(e) & e\in E\\
-        %                    \min(wt(v, x), wt(v, y)) & e\notin E\wedge (u=x\vee u=y)
-        %                \end{array}
-        %                \right.
-        %        \end{equation}
-        %        It is easy to see that $|V'|=n-1$ and hence from induction, we know that $MST(G')$ is unique. Call it $T'=(V', E_{T'})$. Construct $T=(V, E_T)$ from $T'$ as follows:
+        This completes the induction and the proof that \textit{if all edge weights in a graph are distinct, then its MST is unique}.
     \end{proof}
 \end{solution}
-
