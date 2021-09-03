@@ -5,18 +5,80 @@
     \tcblower{}
     \begin{proof}[Solution]
         We begin by observing the property of Fibonacci numbers:
-        \begin{equation}
+        \begin{equation}\label{eq:fib}
             \begin{split}
-                f(n)&=f(n-1)+f(n-2)\ \forall n\geq 3\\
-                \text{and, } f(1)&=f(2)=1
+                f_n&=f_{n-1}+f_{n-2}\ \forall n\geq 3\\
+                \text{and, } f_1&=f_2=1
             \end{split}
         \end{equation}
-        Now, consider an alphabet $A=(a_1, a_2, \ldots,a_n)$ such that it has a frequency vector $V=(1, 1, \ldots, f(n))$. We have the following claim for such a situation:
-        \begin{claim}
-            The Huffman tree is unique and $a_n$ gets encoded using a single bit.
+        We are given an alphabet $A=(a_1, a_2, \ldots,a_n)$ such that it has a frequency vector $F=(f_1, f_2, \ldots, f_n)$.Before finding the encoding, consider the sum of first $k$ Fibonacci numbers, call it $s_k$:
+        \begin{equation}\label{eq:fsum}
+            \begin{split}
+                &s_k=f_1+f_2+\cdots+f_{n-2}+f_{n-1}+f_n\\
+                \implies &s_k=f_1+f_2+\cdots+f_{n-2}+f_{n+1}\\
+                \implies &s_k=s_{k-2}+f_{n+1}\\
+                \implies &s_k-s_{k-2}=f_{n+1}
+            \end{split}
+        \end{equation}
+        On performing telescopic summation over Equation~\ref{eq:fsum} (for $k>2$), we get the following:
+        \begin{equation}\label{eq:skeval}
+            \begin{alignedat}{4}
+                & &s_k-\cancel{s_{k-2}} &=f_{k+1}\\
+                &+ &s_{k-1}-\cancel{s_{k-3}} &=f_{k}\\
+                &+ &\cancel{s_{k-2}}-\cancel{s_{k-4}} &=f_{k-1}\\
+                & & &\vdots\\
+                &+ &\cancel{s_4}-s_2 &=f_5\\
+                &+ &\cancel{s_3}-s_1 &=f_4\\
+                &\implies &s_k+s_{k-1}-s_2-s_1 &=s_{k+1}-f_3-f_2-f_1\\
+                &\implies &(s_k+1)+(s_{k-1}+1) &=(s_{k+1}+1)
+            \end{alignedat}
+        \end{equation}
+        This Equation~\ref{eq:skeval} takes a form similar to Equation~\ref{eq:fib} and thus, $s_k+1=f_m$ for some $m$. On substituting value of $k=1$:
+        \begin{equation}\label{eq:sk}
+            \begin{split}
+                &s_1+1=f_m\\
+                \implies &f_m=2\\
+                \implies &m=3\\
+                \implies &s_k+1=f_{k+2}\\
+                \implies &s_k=f_{k+2}-1
+            \end{split}
+        \end{equation}
+        Now consider the Huffman tree for $|A|=n$. Each of the frequency $f_i$ ($1\leq i\leq n-2$) is less than $f_n$ and sum of all frequencies $f_i$ ($1\leq i\leq n-2$), i.e., $s_{k-2}=f_n-1$ is less than $f_n$. We also know that $a_i$ is merged at the same time or before $a_j$ for any $i<j$. From this, we can formulate the merging strategy with the help of the following inductive claim:
+        \begin{claim}\label{claim:moves}
+            The optimal Huffman tree for $A$ with frequency vector $F$ is constructed in a way such that $(a_1, a_2, \ldots, a_i)$ is merged in the first $i-1$ steps $\forall i: 1\leq i\leq n$.
         \end{claim}
         \begin{proof}
-            We will prove the claim using induction on $n$.
+            \textbf{Base case:} $i=1$ is trivially true since $a_1$ is a leaf node and is \textit{merged} in $0$ merges.\\
+            \textbf{Induction Step:} Assume the claim is true for $i-1$. After $i-2$ merges, $(a_1, a_2, \ldots, a_{i-1})$ have been merged into $tree(a_1, a_2, \ldots, a_{i-1})$, and the frequency vector will be as follows,
+            \begin{equation}
+                \begin{split}
+                    F &= \left(f_1+f_2+\cdots+f_{i-1}, f_i, f_{i+1}, \ldots, f_n\right)\\
+                    F &= (s_{i-1}, f_i, f_{i+1}, \ldots, f_n)\\
+                    F &= (f_{i+1}-1, f_i, f_{i+1}, \ldots, f_n)\text{, from Equation~\ref{eq:sk}}
+                \end{split}
+            \end{equation}
+            It is easy to see that the least two frequencies in the frequency vector are $f_i, f_{i+1}-1$ which correspond to $a_i$ and $tree(a_1, a_2, \ldots, a_{i-1})$. Therefore the $(i-1)\textsuperscript{th}$ merge will merge these two into $tree(a_1, a_2, \ldots, a_{i})$.\\
+            We have shown that $a_i$ is merged in the $(i-1)\textsuperscript{th}$ step and from induction we know that $(a_1, a_2, \ldots, a_{i-1})$ are merged before $(i-1)$ steps and thus, $(a_1, a_2, \ldots, a_i)$ are merged in $i-1$ steps. This completes the induction and proves the claim.
         \end{proof}
+        Therefore, from Claim~\ref{claim:moves}, we know that $a_n$ is merged in the last step (which is the $(n-1)\textsuperscript{th}$ step) and hence it is encoded using a single bit. We can now inductively define the encoding for each alphabet (for $n>1$):
+        \begin{claim}\label{claim:fibhufans}
+            $a_i$ is encoded as $\underbrace{11\ldots1}_{n-i\ \text{times}}0$ for $n\geq i>1$ and $a_1$ is encoded as $\underbrace{11\ldots1}_{n-1\ \text{times}}$
+        \end{claim}
+        \begin{proof}
+            For $i>1$, we will prove the claim using induction.\\
+            \textbf{Base case:} From Claim~\ref{claim:moves}, we know that $a_n$ will be merged in the last step and thus it is encoded using a single bit, we can choose this bit to be $0$ and thus $enc(a_n)=\underbrace{11\ldots1}_{n-n\ \text{times}}0=0$ and the claim is true for $n$.\\
+            \textbf{Induction Step:} Assume the claim is true for $i+1$, i.e., $enc(a_{i+1})=\underbrace{11\ldots1}_{n-(i+1)\ \text{times}}0$. From the proof of the previous claim, we know that $a_{i+1}$ and $tree(a_1, a_2, \ldots, a_i)$ are siblings and thus, the encoding of the root of $tree(a_1, a_2, \ldots, a_i)$ will be $\underbrace{11\ldots1}_{n-i\ \text{times}}$.\\
+            From the base case, we know that $a_n$ is encoded using a single bit with respect to the root of the tree. Therefore, with respect to $tree(a_1, a_2, \ldots, a_i)$, we know that $a_i$ is encoded using a single bit. Let that bit be $0$. We then have the complete encoding of $a_i$ as:
+            \begin{equation}
+                \begin{split}
+                    enc(a_i) &=enc(tree(a_1, a_2, \ldots, a_i)).0\text{\quad(.\ denotes concatenation)}\\
+                    &=\underbrace{11\ldots1}_{n-i\ \text{times}}0
+                \end{split}
+            \end{equation}
+            This completes the induction for $i>1$ and we now show the correctness of the claim for $i=1$.\\
+            We know that $a_1$ and $a_2$ are siblings in the Huffman tree and thus they differ in their representation in exactly the last bit. Therefore, $enc(a_1)=\underbrace{11\ldots1}_{n-1\ \text{times}}$. This completes the proof of the claim.
+        \end{proof}
+        Thus, we have computed the optimal Huffman encoding for the alphabet $A=(a_1, a_2, \ldots, a_n)$ which has frequency vector as $F=(f_1, f_2, \ldots, f_n)$ and we restate Claim~\ref{claim:fibhufans}:\\
+        In the optimal Huffman encoding for $A$ with frequency $F$ such that $|A|=n$, \textit{$a_i$ is encoded as $\underbrace{11\ldots1}_{n-i\ \text{times}}0$ for $n\geq i>1$ and $a_1$ is encoded as $\underbrace{11\ldots1}_{n-1\ \text{times}}$} (and for $n=1$, $a_n=a_1=0$ trivially).
     \end{proof}
 \end{solution}
