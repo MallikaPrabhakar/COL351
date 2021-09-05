@@ -15,26 +15,24 @@
     \begin{question}[]
         Present an efficient algorithm which outputs best choice of party invitees as per following specifications:\\
         1. Input: list of n people and list of pairs who know each other (undirectional)\\
-        2. Every person invited should have atleast 5 people they know and 5 people they don't know at the party
+        2. Every person invited should have atleast k people they know and k people they don't know at the party\\
+        3. k is set to be 5 in the question but we used k for generality
     \end{question}
     \tcblower{}
     \begin{proof}[Solution]
-        The main idea here is to obtain an adjacency list from the input and parse it. After creating an adjacency list, we keep on iterating over it until no new changes are being made. In every iteration of going over the adjacency list, we go over each vertex and see if the number of neighbours is less than 5 or greater than n-5-1. If either is the case, we "delete" the vertex and all of its edges else, continue. The algorithm is as follows: %remodel because heap? @TODO: yes
-        
-        add description of adj, people as well
-        
+        The main idea here is to obtain an adjacency list $adj$ and $people$ which contains information about vertices and their degrees. We keep a variable $done$ which tells us if the $people$ set is being changed or hasn't changed after a complete iteration of while loop. If there is no change i.e. $done=true$, the while loop breaks. It can also break when $people$ becomes empty. Otherwise it simply denotes that guests are still being removed to find the optimal invitee list.
         \begin{algorithm}[H]
             \caption{Generate list of invitees for 3.a}
             \begin{algorithmic}[1]
                 \Procedure{Invite}{$G$}
                     \State{initialise $adj$} \Comment{empty hashmap of balanced BSTs created for adjacency list}
                     \State{initialise $people$} \Comment{empty balanced BST of degree,vertex pairs}
-                    \ForAll{edge e $\{ u, v \}$ in E(G)} \Comment{sets adj}
+                    \ForAll{edge $e=\{u, v\}$ in E(G)} \Comment{sets adj}
                         \State{add v to adj[u]}
                         \State{add u to adj[v]}
                     \EndFor{}
                     \ForAll{vertex v in V(G)} \Comment{sets people}
-                        \State{add (degree(v), v) to people}
+                        \State{add \{degree(v), v\} to people}
                     \EndFor{}
                     
                     \State{$done\gets false$} \Comment{denotes if $people$ is changing}
@@ -43,20 +41,23 @@
                         \If{$people$ is empty}
                             \State{\textbf{break}}
                         \EndIf{}
-                        \State{$i\gets start(people)$}
-                        \If{$degree(i) < k$}
+                        \State{$\{d, v\}\gets$ vertex with minimum degree in $people$}
+                        \If{$d < k$}
                             \State{$done\gets false$}
-                            \State{$deletePerson(vertex(i))$}
+                            \State{$deletePerson(v)$}
                         \EndIf{}
-                        \State{$i\gets end(people)$}
-                        \If{$size(people)-degree(i)-1 < k$}
+                        \If{$people$ is empty}
+                            \State{\textbf{break}}
+                        \EndIf{}
+                        \State{$\{d, v\}\gets$ vertex with maximum degree in $people$}
+                        \If{$size(people)-d-1 < k$}
                             \State{$done\gets false$}
-                            \State{$deletePerson(vertex(i))$}
+                            \State{$deletePerson(v)$}
                         \EndIf{}
                     \EndWhile{}
-                    \State{$invitees\gets[]$}
-                    \ForAll{person in people}
-                        \State{$invitees.append(person.second)$}
+                    \State{initialise $invitees$} \Comment{empty array}
+                    \ForAll{\{degree, person\} in $people$}
+                        \State{add person to $invitees$}
                     \EndFor{}
                     \State{\Return{invitees}}
                 \EndProcedure{}
@@ -92,9 +93,63 @@
         \end{algorithm}
         % @TODO: the following
         \subsection*{Initialisation}
+        $adj$ and $people$ are initialised as an empty hashmap and set. We then use a for loop over E(G) to set values for $adj$. Then $adj$ is used to set values for people using a for loop over V(G) as \{degree, vertex\} pairs. $done$ is set to false initially and is used as a measure to check if further changes are being made to $people$ or not.\\
+        While loop works on the condition of while $done$ is not true. Inside the loop, $done$ is set to true and If $people$ turns out to be empty, it breaks. Different conditions are checked which either modify $people$ and set $done$ to false or make no change.
+        
         \subsection*{Maintenance}
+        For every iteration of while loop, $done$ is set to true to observe which can be changed back to false if a new change occurs.
+        After checking that people is non empty, we look at the pair with minimum degree $ \{ d, v \} $.
+        If the $d < k$, it implies $v$ knows less than $k$ people which is unfavourable. Hence we perform $deletePerson(*)$ operation on $v$.
+        Again, we check if $people$ is now empty. If it is, then we break out of the while loop, else continue.
+        Now we look at the pair with maximum degree $ \{ d, v \} $.
+        If $size(people)-d-1<k$ it implies $v$ doesn't know less than $k$ people which is again, unfavourable. Hence we perform $deletePerson(*)$ operation on $v$ and move on to next iteration.
+        
         \subsection*{Termination}
-        \subsection*{Validate best solution}
+        The algorithm terminates if the while loop terminates. The while loop terminates if either $people$ becomes empty or done stays true i.e. no new deletePerson(*) operation was performed. The size of $people$ keeps decreasing until one of the two conditions mentioned above happens.\\
+        \\
+        \textbf{Case 1:} $people$ is empty\\
+        There must be a $deletePerson()$ operation performed in the last iteration else the algorithm would have terminated then. Now, the size of $people$ is 0. Since there are no people to invite to the part anymore, while loop breaks based on first if condition. It terminates.
+        \\
+        \textbf{Case 2:} $done$ is false\\
+        There was a $deletePerson()$ operation performed in the last iteration for reason same as case 1. $done$ is set to true. Now, if the minimum or maximum degree vertex was not in accordance to question statement, it will be removed and $done$ is set to false again and this will repeat until Case 1 or Case 3 is obtained since $size(people)$ will keep on decreasing after every iteration according to our logic.
+        \\
+        \textbf{Case 3:} $done$ is true\\
+        After the $deletePerson()$ operation in last iteration, in current iteration, $done$ is set to true. It is observed that both minimum and maximum degree follow the condition specified in the question. Since no if statement is valid, $done$ is not set to false. Before the next iteration, the while loop condition is check and since $done$ was true, not $done$ is false and while loop terminates.\\
+        \\
+        After termination of loop, a list $invitees$ is initialised as an empty list.
+        for every pair in people, the person $v$ is added to $invitees$ if people is not empty.\\
+        \\
+        $invitees$ is returned
+        
+        \subsection*{Proof of correctness}
+        To prove the correctness of our algorithm, we will show the following:
+        \begin{enumerate}
+            \item{Removing nodes with degree $<k$ is necessary}\label{1}
+            \item{Removing nodes with degree $>n-k-1$ is necessary}
+            \item{No other removal is needed}
+        \end{enumerate}
+        The above three are necessary and sufficient to prove the correctness of our solution.
+        \begin{enumerate}
+            \item{Proof of \ref{1}}\\
+                Consider a vertex $v$ that has a degree $<k$ at any point of time. For any final configuration (selection) of vertices from the graph, 
+        \end{enumerate}
+        
+        \subsection*{Time complexity}
+        Time complexity of $deletePerson(u)$ is $O(degree(u)\times \log|V|)$ \\
+        For the algorithm,\\
+        Setting $adj$ takes $O(|E|)$ time\\
+        Setting $people$ takes $O(|V|)$ time\\
+        Setting $invitees$ takes $O(|V|)$ time\\
+        finding minimum and maximum degree vertices takes $O(\log|V|)$ time\\
+        In the worst case, while loop iterates over all the vertices ($O(|V|)$ iterations)\\
+        \\
+        Total time complexity of the algorithm can be observed as follows:
+        \begin{equation}
+            \begin{split}
+                &O(|E|)+O(|V|)+O(|V|)\times O(\log|V|+\sum_{u\in V}O(degree(u))\times \log|V|)+O(|V|)\\
+                &=O(|V|\log|V|\timesdeg)
+            \end{split}
+        \end{equation}
         
     \end{proof}
 \end{solution}
