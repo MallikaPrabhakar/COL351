@@ -125,14 +125,24 @@
         To prove the correctness of our algorithm, we will show the following:
         \begin{enumerate}
             \item{Removing nodes with degree $<k$ is necessary}\label{1}
-            \item{Removing nodes with degree $>n-k-1$ is necessary}
-            \item{No other removal is needed}
+            \item{Removing nodes with degree $>p-k-1$ is necessary (where $p$ is the current number of vertices in the graph)}\label{2}
+            \item{No other removal is needed}\label{3}
         \end{enumerate}
         The above three are necessary and sufficient to prove the correctness of our solution.
         \begin{enumerate}
             \item{Proof of \ref{1}}\\
-                Consider a vertex $v$ that has a degree $<k$ at any point of time. For any final configuration (selection) of vertices from the graph, 
+                Consider a vertex $v$ that has a degree $<k$ at any point of time. Let its degree be $d$. For any future configuration (selection) of vertices from the graph that contains $v$, the degree of $v$ cannot be larger than $d$. This is because no new edges are added to the graph and edges are only removed, which might include neighbours of $v$.\\
+                Therefore, it is necessary to remove nodes with degree $<k$.
+            \item{Proof of \ref{2}}\\
+                Consider a vertex $v$ that has a degree $>p-k-1$ at any point of time. Let its degree be $d$. For any future configuration (selection) of vertices from the graph that contains $v$, the degree of $v$ will be given by $d-r$, where $r$ is the number of neighbours of $v$ removed. Now, number of vertices in the graph that have been removed upto this configuration is $t (>r)$. Therefore, the number of people $v$ doesn't know is equal to,
+                \begin{equation}
+                    (p-t)-(d-r)-1=(p-d+1)-(t-r)<p-d+1<k
+                \end{equation}
+                Therefore, the number of people $v$ doesn't know can never increase in any future configuration and hence removing $v$ is necessary.
+            \item{Proof of \ref{3}}\\
+                We have proved that the removals that we have done in \ref{1} and \ref{2} are necessary. We will not prove the sufficiency of the same. Consider any vertex that is present in $G$ after all \textit{necessary} removals. Each vertex $v$ in $G$ knows atleast $k$ other people in $G$ else \ref{1} would not have completed. Each vertex $v$ also does not know atleast $k$ people since \ref{2} has completed. Therefore every vertex $v$ in $G$ satisfies the given constraints in the problem and hence the \textit{necessary} removals are also sufficient.
         \end{enumerate}
+        This completes the proof of correctness of the algorithm.
         
         \subsection*{Time complexity}
         Time complexity of $deletePerson(u)$ is $O(degree(u)\times \log|V|)$ \\
@@ -142,14 +152,17 @@
         Setting $invitees$ takes $O(|V|)$ time\\
         finding minimum and maximum degree vertices takes $O(\log|V|)$ time\\
         In the worst case, while loop iterates over all the vertices ($O(|V|)$ iterations)\\
-        \\
         Total time complexity of the algorithm can be observed as follows:
         \begin{equation}
             \begin{split}
-                &O(|E|)+O(|V|)+O(|V|)\times O(\log|V|+\sum_{u\in V}O(degree(u))\times \log|V|)+O(|V|)\\
-                &=O(|V|\log|V|\timesdeg)
+                &O(|E|)+O(|V|)+ O(\text{total operations inside while loop})+O(|V|)\\
+                &=O(|E|)+O(|V|)+ O(|V|\log|V|+\sum_{u\in V}O(degree(u))\times \log|V|)+O(|V|)\\
+                &=O(|E|\times \log|V|)\\
+                &=O(n^2\log n)
             \end{split}
         \end{equation}
+        Where $n$ is $|V|$ (given)
+        and $|E|$ is $n^2$ in worst case scenario
         
     \end{proof}
 \end{solution}
