@@ -4,7 +4,7 @@
 % opt(P) = opt(P') + 1
 \begin{solution}{Question 3.b}
     \begin{question}[]
-        arrange inited people togethe on tables with max capacity 10 st the age diff is less than 10 on each table. Find min number of tables needed to seat all the guests in $O(n_0)$
+        Suppose finally Alice invited $n_0$ out of her $n$ friends to the party. Her next task is to set a minimum number of dinner tables for her friends under the constraint that each table has a capacity of ten people and the age difference between members of each dining group should be at most ten years. Present a greedy algorithm to solve this problem in $O(n_0)$ time assuming the age of each person is an integer in the range $[10, 99]$.
     \end{question}
     \tcblower{}
     \begin{proof}[Solution]
@@ -13,10 +13,10 @@
             \caption{Find number of tables needed}
             \begin{algorithmic}[1]
                 \Procedure{Seat}{$people$} \Comment{Finds the minimum number of tables needed}
-                \State{$arr[100]\gets$initialised as zero array}\Comment {index 0 to 9 aren't used}
+                \State{$arr[100]\gets$initialised as zero array}\Comment{index 0 to 9 aren't used}
                 \For{person in people} \Comment{get the frequency array}
-                    \State $arr[age(person)]\gets arr[age(person)]+1$
-                \EndFor
+                    \State{$arr[age(person)]\gets arr[age(person)]+1$}
+                \EndFor{}
                 \State{set $index, \ smallest, \ tcount\gets0$} \Comment{helpful intermediate variables}
                 \State{set $toAdd \gets 10$}
                 \While{$index<100$}
@@ -29,12 +29,12 @@
                         \State{$tcount \gets tcount+1$}
                         \State{$smallest \gets 0$}
                         \State{$toAdd \gets 10$}
-                    \ElsIf{$arr[index]>toAdd$} \Comment{table occupancy can reach max(10)}
+                    \ElsIf{$arr[index]>toAdd$} \Comment{table occupancy can reach atmost $10$}
                         \State{$arr[index] \gets arr[index]-toAdd$}
                         \State{$tcount \gets tcount+1$}
                         \State{$toAdd \gets 10$}
                         \State{$smallest \gets 0$}
-                    \Else
+                    \Else{}
                         \State{$toAdd \gets toAdd-arr[index]$}
                         \State{$arr[index] \gets 0 $}
                         \State{$index \gets index+1$}
@@ -59,33 +59,20 @@
         A while loop is run. The termination condition depends on the $index$ variable.
         The loop keeps incrementing index until it finds the index at which arr[index] is not 0.
         \subsection*{Maintenance}
-        For maintenance, we look at the iterations of the while loop. Following are the possible cases which happens in the while loop.\\
-        \\
+        For maintenance, we look at the iterations of the while loop.\\
+        \textbf{smallest = 0:}\\
+        $smallest = 0$ implies that the table is new and there are no people seated on it.\\\\
+        The following cases arise in the if-else block:\\
         \textbf{Case 1:} arr[index] is 0\\
         Here, we move to the next index since there are no people of this age invited to the party.\\
-        \\
         \textbf{Case 2:} age gap between youngest person at table and index is $>10$\\
-        Here, we cannot add the people at this index to the table since it violates our condition of the maximum age gap at table to be 10.\\
-        We increase $tcount$ by 1 and reset values of $smallest$ and $toAdd$ to 0 and 10 respectively.\\
-        \\
-        \textbf{Case 3:} $smallest = 0$\\
-        $smallest = 0$ implies that the table is new and there are no people seated on it.
-        We set the value of smallest as $index$ since the people at current index will be added in the next iteration and will be the youngest for the new table as we are going in increasing order of ages.
-        \\
-        \\
-        \textbf{Case 4:} number of people with age same as index are more than $toAdd$\\
-        In this case, the current table can be filled completely. We subtract the number of people to be added from arr[index] and increment $tcount$ by 1.\\
-        $toAdd$ and $smallest$ are reinitialised.
-        \\
-        \\
-        \textbf{Case 5:} number of people with age same as index are $\leq toAdd$\\
-        Number of people of age same as index is not enough to fill the current table. We still allot them the table and move to next index.\\
-        $toAdd$ is decremented by $arr[index]$\\
-        $arr[index]$ is set to 0.\\
+        Here, we cannot add the people at this index to the table since it violates our condition of the maximum age gap at table to be 10. We increase $tcount$ by 1 and reset values of $smallest$ and $toAdd$ to 0 and 10 respectively.\\
+        \textbf{Case 3:} number of people with age same as index are more than $toAdd$\\
+        In this case, the current table can be filled completely. We subtract the number of people to be added from arr[index] and increment $tcount$ by 1. $toAdd$ and $smallest$ are reinitialised.\\
+        \textbf{Case 4:} number of people with age same as index are $\leq toAdd$\\
+        Number of people of age same as index is not enough to fill the current table. We still allot them the table and move to next index. $toAdd$ is decremented by $arr[index]$. $arr[index]$ is set to 0.\\
         Since last group of statements is an else and no other conditions remain, our maintenance step is complete.
-        \\
-        \\\
-        
+
         \subsection*{Termination and Time Complexity}
         % \begin{enumerate}
             % \item According to the cases mentioned in the previous part, index increases by one when either $arr[index]=0$ or all people of same age are seated i.e in case 1 or case 5.
@@ -94,8 +81,43 @@
             % \item case 3 allots the value of index which has atleast one person of that age to smallest who will be seated on the new table
             % \item It causes either of the case 1, 2, 4, 5 to repeat again.
         % \end{enumerate}
-        In each iteration of the while loop, the value of $index$ increases by $1$ or the total sum of $arr$ decreases by some non
-    \end{proof}
-    
-\end{solution}
+        In each iteration of the while loop, the value of $index$ increases by $1$ or the total sum of $arr$ decreases by some non-zero number or $tcount$ increments by $1$. Thus, the maximum number of iterations of the loop is bounded by:
+        \begin{equation}
+            \begin{split}
+                100+sum(arr)+\max(tables)&=100+O(n_0)+O(n_0)\\
+                &=O(n_0)
+            \end{split}
+        \end{equation}
+        Therefore, the while loop runs for $O(n_0)$ iterations and each iteration takes $O(1)$ time since it involved making finite checks and updates all of which take $O(1)$ time.\\
+        The loop from lines $3\text{--}5$ takes $O(n_0)$ time since it involves iterating over the entire array of size $n_0$ once.\\
+        Therefore, the total time complexity of the algorithm is $O(n_0)$.
 
+        \subsection*{Proof of Correctness}
+        To prove the correctness of the algorithm, we first prove the following claim:
+        \begin{claim}\label{claim:seatswap}
+            If there exists an optimal seating where $p_i, p_k$ are on one table and $p_j$ is on another table such that $age(p_i)<age(p_j)<age(p_k)$, there exists another optimal seating where $p_i, p_j$ are on one table and $p_k$ is on another table.
+        \end{claim}
+        \begin{proof}
+            Since $p_i$ and $p_k$ are on the same table, we know that $age(p_k)\leq age(p_{l1})+10$, where $p_{l1}$ is the person with least age on the table. Consider the person with smallest age on the table containing $p_j$, say $p_{l2}$. We know that $age(p_j)\leq age(p_{l2})+10$. Therefore, we have that:
+            \begin{equation}
+                age(p_k)\leq age(p_{l2})+10\text{, and }age(p_j)\leq age(p_{l1})+10
+            \end{equation}
+            Therefore, it is possible to swap the positions of $p_k$ and $p_j$. Thus, we have obtained an arrangement where $p_i, p_j$ are on the same table and $p_k$ is on a different table. This completes the proof of the claim.
+        \end{proof}
+        Consider the person with the smallest age, say $p_0$. Let the set of people be $P$ and the set of people arranged on the same table as $p_0$ using our algorithm be $A_0$. Let the optimal number of tables needed for a set of people be denoted by $opt(.)$. Now, we will show that,
+        \begin{claim}\label{claim:optseat}
+            $opt(P)=opt(P\setminus A_0)+1$
+        \end{claim}
+        \begin{proof}
+            We first note that from Claim~\ref{claim:seatswap}, it is possible to generate a seating where no more swaps are possible. The set $A_0$ which is generated by our algorithm is one such arrangement for a single table. Thus, there exists an optimal arrangement with $A_0$ as one table. We will now prove the claim in two parts:
+            \begin{enumerate}
+                \item{$opt(P)\leq opt(P\setminus A_0)+1$}\\
+                    An arrangement such that one table consists of people in $A_0$ and the remaining are arranged optimally will have the number of tables equal $opt(P\setminus A_0)+1$. This is by definition $\geq$ the most optimal seating for the set $P$ and thus this equality trivially holds.
+                \item{$opt(P\setminus A_0)\leq opt(P)-1$}\\
+                    We know that there exists an optimal arrangement which contains $A_0$ as one table. Therefore, the optimal arrangement for the remaining set of people, i.e., $P\setminus A_0$ can be done using atleast $opt(P)-1$ tables. Thus, we get that $opt(P\setminus A_0)\leq opt(P)-1$ which proves the second part of the claim.
+            \end{enumerate}
+            From $1$ and $2$, we get that $opt(P)=opt(P\setminus A_0)+1$, and this completes the proof of the claim.
+        \end{proof}
+        Therefore, from Claim~\ref{claim:optseat}, we have shown that our algorithm \textit{greedily} selects the most optimal seating. This completes the proof of correctness of our algorithm.
+    \end{proof}
+\end{solution}
