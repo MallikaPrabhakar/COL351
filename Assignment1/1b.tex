@@ -4,33 +4,34 @@
     \end{question}
     \tcblower{}
     \begin{proof}[Solution]
-        The idea is to use the previous result along with the fact that the number of edges to be removed to form a spanning tree is atmost $(n+8)-(n-1)=9$, assuming that $G$ was initially connected (else no MST exists). The algorithm is as follows:
+        The idea is to use the previous result along with the fact that the number of edges to be removed to form a spanning tree is $m-(n-1)$ which is atmost $(n+8)-(n-1)=9$, assuming that $G$ was initially connected (else no MST exists). The algorithm is as follows:
         \begin{algorithm}[H]
-            \caption{Compute MST for 1.b}
+            \caption{Compute MST for 1.b}\label{alg:mst}
             \begin{algorithmic}[1]
                 \Procedure{MST}{$G$}
-                    \If{$|E(G)|$ equals $|V(G)|-1$}
-                        \State{\Return{$G$}}    \Comment{since $G$ is acyclic and hence a tree}
-                    \EndIf{}
-                    \State{$C\gets {findCycle}(G)$}
-                    \State{$e\gets$ edge with largest weight in $C$}
-                    \State{remove $e$ from $G$}
-                    \State{$T_G\gets MST(G)$}
-                    \State{\Return{$T_G$}}
+                    \While{$|E(G)| > |V(G)|-1$}
+                        \State{$C\gets {findCycle}(G)$}
+                        \State{$e\gets$ edge with largest weight in $C$}
+                        \State{remove $e$ from $G$}
+                    \EndWhile{}
+                    \State{\Return{$G$}}
                 \EndProcedure{}
             \end{algorithmic}
         \end{algorithm}
         
         The procedure \textit{findCycle} calls a DFS function on $G$ which uses graph colouring and returns the first cycle it finds:
         \begin{algorithm}[H]
-            \caption{$findCycle$}
+            \caption{$findCycle$}\label{alg:cycle}
             \begin{algorithmic}[1]
                 \Procedure{findCycle}{$G$}
                     \State{$v\gets$ any vertex of $G$}
                     \State{$\text{colour}\gets$ map of vertices initialised to zero}
                     \State{$\text{parent}\gets$ map of vertices initialised to \texttt{null}}
-                    \State{$(u, v)\gets \text{dfs}(G, v, \text{colour}, \text{parent}, \mathtt{null})$}
-                    \State{\Comment{returns the \textit{bottommost and topmost} vertex of the cycle}}
+                    \State{$(u, v)\gets \text{DFS}(G, v, \text{colour}, \text{parent}, \mathtt{null})$}
+                    \State{\Comment{\textit{DFS} returns the \textit{bottommost and topmost} vertex of the cycle}}
+                    \If{\textit{DFS} returned \texttt{null}}
+                        \State{\Return{\texttt{null}}}
+                    \EndIf{}
                     \State{$C\gets$ empty array of edges}
                     \State{add $(u, v)$ to $C$}
                     \While{$u\neq v$}
@@ -44,24 +45,70 @@
 
         The \textit{DFS} function looks as follows:
         \begin{algorithm}[H]
-            \caption{Identify cycle using colouring and DFS}
+            \caption{Identify cycle using colouring and DFS}\label{alg:dfs}
             \begin{algorithmic}[1]
                 \Procedure{DFS}{$G, v, \text{colour}, \text{parent}, p$}
                     \State{$\text{parent}(v)\gets p$}
                     \State{$\text{colour}(v)\gets 1$}
                     \ForAll{$u$ such that $u$ is neighbour of $v$ in $G$}
-                        \If{$\text{colour}(u)$ is $2$}
+                        \If{$\text{colour}(u)$ is $2$}  \Comment{there is a forward edge from $v$ to $u$}
                             \State{\Return{$(u, v)$}}
-                        \ElsIf{$\text{colour}(u)$ is 0}
+                        \ElsIf{$\text{colour}(u)$ is 0} \Comment{$u$ is unvisited}
                             \State{$\text{value}\gets\text{dfs}(G, u, \text{colour}, \text{parent}, v)$}
-                            \If{$\text{value}$ is not \texttt{null}}
+                            \If{$\text{value}$ is not \texttt{null}}    \Comment{cycle found in subtree of $u$}
                             \State{\Return{value}}
                             \EndIf{}
                         \EndIf{}
                     \EndFor{}
                     \State{$\text{colour}(v)\gets 2$}
+                    \State{\Return{\texttt{null}}}      \Comment{no cycle found in subtree of $v$}
                 \EndProcedure{}
             \end{algorithmic}
         \end{algorithm}
+        We will assume without proof that the \textit{DFS} (Algorithm~\ref{alg:dfs}) function is correct and it takes $O(n+m)$ time since the algorithm is a standard one and has been discussed in the lecture.\\
+        Now consider the function \textit{findCycle} (Algorithm~\ref{alg:cycle}), lines $3, 4$ take $O(n)$ time and line $5$ takes $O(n+m)$ time. The while loop (lines $9\text{--}12$) traverses up from $u$ to $v$ and each iteration takes $O(1)$ time. Therefore the entire while loop completes in $O(n)$ time (since the graph has $n$ vertices and hence the loop cannot run for more than $n$ iterations). Therefore the total time complexity of \textit{findCycle} is $O(n+m)$.\\
+
+        We will now prove termination and compute complexity of Algorithm~\ref{alg:mst}, which contains the code for computing MST:\\
+        \textbf{Termination:} The while loop terminates when $|E|=|V|-1$, that is, when the graph is a tree (since it assumes that the graph is connected). In each iteration of the while loop, \textit{findCycle} returns a valid cycle since $|E|>|V|-1$ and the graph is connected. After having found the cycle, we remove the edge with largest weight from $G$ and therefore $|E|$ reduces by $1$. Since $|V|$ remains constant, the while loop terminates after a finite number of steps.\\
+        \textbf{Time Complexity:} The while loop runs for exactly $m-(n-1)$ iterations, which is $O(m-(n-1))=O((n+8)-(n-1))=O(1)$ for the given constraints. Each iteration of the while loop calls \textit{findCycle} which runs in $O(n+m)=O(n+(n+8))=O(n)$. Finding the edge with least weight is $O(n)$ since a cycle cannot have more than $n$ edges. Removing this edge from $G$ can be implemented in as worse as $O(n)$ (better implementations in $O(1)$ and $O(\log(n))$ time exist but this
+        won't change the complexity of the algorithm as we will show). Thus, each iteration of the while loop takes $O(n)$ time and the total time complexity of Algorithm~\ref{alg:mst} is:
+        \begin{equation}
+            \begin{split}
+                T(MST)&=O(\text{iterations of while loop}\times\text{complexity of each iteration})\\
+                &=O(O(1)\times O(n))=O(n)
+            \end{split}
+        \end{equation}
+        \textbf{Correctness:} We now proceed to prove the correctness of the algorithm, using the following claim,
+        \begin{claim}\label{claim:nolarge}
+            If a cycle has edges of distinct weights, the edge with the largest weight can not be a part of any MST
+        \end{claim}
+        \begin{proof}
+            Let us assume by contradiction that the claim is false, then there exists an MST, say $T$ such that the largest edge of cycle $C$ (with distinct weights) is present in $T$. Let that edge be $e=(x, y)$. Now consider the paths from $x$ to $y$ in $G$. There exists atleast another path from $x$ to $y$, which is exactly equal to $C\setminus\{e\}$, call it $P$. Consider the edge in $P$ which is not in $T$, say $f=(p, q)$. We know such an edge exists since $T$ is acyclic. Now,
+            consider $T'=T\setminus\{e\}\cup\{f\}$. We will now prove that $T'$ is a spanning tree using the following claim:
+            \begin{claim}\label{claim:swap}
+                Consider any edge $m=(a, b)$ in $G$ which is not in $T$ (spanning tree of $G$). Let $n=(u, v)$ be any edge on the unique path from $a$ to $b$ in $T$. Then on swapping $m$ with $n$ in $T$, we get another spanning tree of $G$.
+            \end{claim}
+            \begin{proof}
+                If $path_T(u, a)$ does not exist in $T$, then swap $u$, $v$ (for ease of notation). Consider the graph $T\setminus\{n\}$. Define set
+                \begin{equation}
+                    S=\{(c, d)\ |\ path_T(c, d)=\{k_1, k_2, \ldots, u, v, \ldots, k_l\}\}
+                \end{equation}
+                All pair of vertices in this set are disconnected since all paths in the tree are unique. Now, consider the path
+                \begin{equation}
+                    P_{T'}=\{c=k_1, k_2, \ldots, u\}\cup path_T(u, a)\cup path_T(b, v)\cup \{\ldots, d=k_l\}, \forall (c, d)\in S
+                \end{equation}
+                Now, consider the graph $T'=T\setminus\{n\}\cup\{m\}$. All paths given by $P_{T'}$ are present in $T'$ and thus, all pairs of vertices in $S$ are connected in $T'$. Since all other paths are the same in $T$ and $T'$, $T'$ is connected. Since $|E(T')|=|V(T')|-1$, $T'$ is a tree and also a spanning tree of $G$. This completes the proof of the claim.
+            \end{proof}
+            Thus, from Claim~\ref{claim:swap}, we know that $T'$ is an MST of $G$. Consider the weight of $T'$:
+            \begin{equation}
+                \begin{split}
+                    wt(T')&=wt(T)-wt(e)+wt(f)\\
+                    \implies wt(T')&<wt(T)\text{, since }wt(e)>wt(f)
+                \end{split}
+            \end{equation}
+            This is a contradiction to the fact that $T$ is an MST of $G$. Therefore our assumption that Claim~\ref{claim:nolarge} is incorrect was wrong. This proves the correctness of Claim~\ref{claim:nolarge}.
+        \end{proof}
+        Now consider Algorithm~\ref{alg:mst}. In each iteration of the algorithm, we remove the largest edge of a cycle from $G$. Let the new graph obtained be $G'$. Therefore our algorithm transforms the problem from $G$ to $G'$. We need to show that both graphs have the same MST.\\
+        From Claim~\ref{claim:nolarge}, we know that $e$ cannot be in any MST of $G$ and from Question~\ref{ques:1a}, we know that the MST of $G$ will be unique. Therefore, the MST of $G$ and $G'=G\setminus\{e\}$ will be the same. This completes the proof of correctness of Algorithm~\ref{alg:mst}.
     \end{proof}
 \end{solution}
