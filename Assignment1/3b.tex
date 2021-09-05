@@ -1,1 +1,101 @@
-file for 3b
+% first show that there exists an optimal seating where all ages are contiguous
+% P = all people
+% P' = P \ {those on the table with smallest}
+% opt(P) = opt(P') + 1
+\begin{solution}{Question 3.b}
+    \begin{question}[]
+        arrange inited people togethe on tables with max capacity 10 st the age diff is less than 10 on each table. Find min number of tables needed to seat all the guests in $O(n_0)$
+    \end{question}
+    \tcblower{}
+    \begin{proof}[Solution]
+        We have to implement an $O(n_0)$ greedy approach for the fore-mentioned question. Idea behind our algorithm is to create a frequency array which stores how many people of a certain age are there in the invited group from age $10$ to $100$. We then start grouping $10$ people together from the smallest to largest age. If the difference between youngest and oldest person exceeds $10$, we stop the group and create a new table. Following is the algorithm for the same:
+        \begin{algorithm}[H]
+            \caption{Find number of tables needed}
+            \begin{algorithmic}[1]
+                \Procedure{Seat}{$people$} \Comment{Finds the minimum number of tables needed}
+                \State{$arr[100]\gets$initialised as zero array}\Comment {index 0 to 9 aren't used}
+                \For{person in people} \Comment{get the frequency array}
+                    \State $arr[age(person)]\gets arr[age(person)]+1$
+                \EndFor
+                \State{set $index, \ smallest, \ tcount\gets0$} \Comment{helpful intermediate variables}
+                \State{set $toAdd \gets 10$}
+                \While{$index<100$}
+                    \If{$smallest=0$} \Comment{smallest=0 signifies no person on a table yet}
+                        \State{$smallest \gets index$}
+                    \EndIf{}
+                    \If{$arr[index] = 0$} \Comment{no person of that age}
+                        \State{$index\gets index+1$}
+                    \ElsIf{$index>smallest+10$} \Comment{large age gap}
+                        \State{$tcount \gets tcount+1$}
+                        \State{$smallest \gets 0$}
+                        \State{$toAdd \gets 10$}
+                    \ElsIf{$arr[index]>toAdd$} \Comment{table occupancy can reach max(10)}
+                        \State{$arr[index] \gets arr[index]-toAdd$}
+                        \State{$tcount \gets tcount+1$}
+                        \State{$toAdd \gets 10$}
+                        \State{$smallest \gets 0$}
+                    \Else
+                        \State{$toAdd \gets toAdd-arr[index]$}
+                        \State{$arr[index] \gets 0 $}
+                        \State{$index \gets index+1$}
+                    \EndIf{}
+                \EndWhile{}
+                \If{$toAdd \neq 10$} \Comment{take last non filled table into account}
+                    \State{$tcount \gets tcount+1$}
+                \EndIf{}
+                \State{\Return{$tcount$}} \Comment{total number of tables required is returned}
+                \EndProcedure{}
+            \end{algorithmic}
+        \end{algorithm}
+        
+        Now we shall prove the correctness of the algorithm:
+        \subsection*{Initialisation}
+        We generate a frequency array by declaring a zero array of size 100 and incrementing the value stored at an index by 1. The update at an index is done based on what age value the for loop comes across. Updated index is same as age. \\
+        $index$ variable is used to refer the current index in the while loop.
+        $toAdd$ variable shows how many more people are to be added at the recent table.
+        $smallest$ denotes the smallest value of age of people sitting at a table. $smallest=0$ means that the table is empty.
+        $tcount$ denotes the table number.
+        All of the forementioned variables are initialsed to zero except toAdd which is initialised at 10.\\
+        A while loop is run. The termination condition depends on the $index$ variable.
+        The loop keeps incrementing index until it finds the index at which arr[index] is not 0.
+        \subsection*{Maintenance}
+        For maintenance, we look at the iterations of the while loop. Following are the possible cases which happens in the while loop.\\
+        \\
+        \textbf{Case 1:} arr[index] is 0\\
+        Here, we move to the next index since there are no people of this age invited to the party.\\
+        \\
+        \textbf{Case 2:} age gap between youngest person at table and index is $>10$\\
+        Here, we cannot add the people at this index to the table since it violates our condition of the maximum age gap at table to be 10.\\
+        We increase $tcount$ by 1 and reset values of $smallest$ and $toAdd$ to 0 and 10 respectively.\\
+        \\
+        \textbf{Case 3:} $smallest = 0$\\
+        $smallest = 0$ implies that the table is new and there are no people seated on it.
+        We set the value of smallest as $index$ since the people at current index will be added in the next iteration and will be the youngest for the new table as we are going in increasing order of ages.
+        \\
+        \\
+        \textbf{Case 4:} number of people with age same as index are more than $toAdd$\\
+        In this case, the current table can be filled completely. We subtract the number of people to be added from arr[index] and increment $tcount$ by 1.\\
+        $toAdd$ and $smallest$ are reinitialised.
+        \\
+        \\
+        \textbf{Case 5:} number of people with age same as index are $\leq toAdd$\\
+        Number of people of age same as index is not enough to fill the current table. We still allot them the table and move to next index.\\
+        $toAdd$ is decremented by $arr[index]$\\
+        $arr[index]$ is set to 0.\\
+        Since last group of statements is an else and no other conditions remain, our maintenance step is complete.
+        \\
+        \\\
+        
+        \subsection*{Termination and Time Complexity}
+        % \begin{enumerate}
+            % \item According to the cases mentioned in the previous part, index increases by one when either $arr[index]=0$ or all people of same age are seated i.e in case 1 or case 5.
+            % \item If case 2 occurs, $smallest$ is set to 0 and compulsorily leads to case 3 in next iteration.
+            % \item If case 4 occurs, similar to case to, $smallest$ is set to 0 and leads to case 3 in next iteration.
+            % \item case 3 allots the value of index which has atleast one person of that age to smallest who will be seated on the new table
+            % \item It causes either of the case 1, 2, 4, 5 to repeat again.
+        % \end{enumerate}
+        In each iteration of the while loop, the value of $index$ increases by $1$ or the total sum of $arr$ decreases by some non
+    \end{proof}
+    
+\end{solution}
+

@@ -1,1 +1,77 @@
-file for 3a
+% TODO:
+% no need to explain in detail about how the graph is taken as input - only mention that insertion and deletion from adj list can be done in O(1) using hashing, and O(log(n)) using a balanced-BST
+% I know you just wrote a rough sketch abhi, but don't forget to modify algorithm to look more pseudocode-y (1b dekh lena for reference, or Navneel's directly)
+%
+% Structuring the solution post writing the algorithm:
+% Termination -
+% In each iteration of the loop except the last iteration, the number of vertices reduce by 1 and hence the loop will run for atmost n+1 iterations
+% Correctness -
+% 1. removing nodes with degree < k is necessary
+% 2. removing nodes with degree > n - k - 1 is necessary
+% 3. after no more such removals possible, show remaining graph satisfies the constraints
+% PS: it might look noice if we replace 5 by k everywhere, gives vibes that we solved a more generic problem and we can state this at the start
+%yayyyy i totally agree with all the points mentioned @sayam
+\begin{solution}{Question 3.a}
+    \begin{question}[]
+        Present an efficient algorithm which outputs best choice of party invitees as per following specifications:\\
+        1. Input: list of n people and list of pairs who know each other (undirectional)\\
+        2. Every person invited should have atleast 5 people they know and 5 people they don't know at the party
+    \end{question}
+    \tcblower{}
+    \begin{proof}[Solution]
+        The main idea here is to obtain an adjacency list from the input and parse it. After creating an adjacency list, we keep on iterating over it until no new changes are being made. In every iteration of going over the adjacency list, we go over each vertex and see if the number of neighbours is less than 5 or greater than n-5-1. If either is the case, we "delete" the vertex and all of its edges else, continue. The algorithm is as follows: %remodel because heap? @TODO: yes
+        
+        add description of adj, people as well
+        
+        \begin{algorithm}[H]
+            \caption{Generate list of invitees for 3.a}
+            \begin{algorithmic}[1]
+                \Procedure{Invite}{$G$}
+                    \State{$done=false\gets$ denotes if changes are being made to the people heap}
+                    \While{!done}
+                        \State{$done\gets$ true}
+                        \If{people is \texttt{empty}}
+                            \State{\textbf{break}}
+                        \EndIf{}
+                        \State{$i\gets people.begin()$}
+                        \If{$i.first < 5$}
+                            \State{$done\gets 0, deletePerson(i.second)$}
+                        \EndIf{}
+                        \State{$i\gets people.rbegin()$}
+                        \If{$people.size()-i.first-1<5$}
+                            \State{$done\gets 0, deletePerson(i.second)$}
+                        \EndIf{}
+                    \EndWhile{}
+                    \State{$invitees\gets[]$}
+                    \ForAll{person in people}
+                        \State{$invitees.append(person.second)$}
+                    \EndFor{}
+                    \State{\Return{invitees}}
+                \EndProcedure{}
+            \end{algorithmic}
+        \end{algorithm}
+        
+        The procedure \textit{deletePerson} removes a vertex and modifies all its vertices by popping them, removing specific edge and pushing them back. Time compleity os $O(degree(u)*log(n)$.
+        \begin{algorithm}[H]
+            \caption{sub-algorithm for $deletePerson$}
+            \begin{algorithmic}[1]
+                \Procedure{deletePerson}{$G$}
+                \ForAll{vertex in neighbours of u}
+                \State{people.erase({adj[v].size(), v})}
+                \State{adj[v].erase(u)}
+                \State{people.insert({adj[v].size(), v})}
+                \EndFor
+                \State{people.erase({adj[u].size(), u})}
+                \State{\Return{}}
+                \EndProcedure{}
+            \end{algorithmic}
+        \end{algorithm}
+
+        proof of termination:
+        yems yems\\
+        \\
+        proof of correctness:
+        yems yems\\
+    \end{proof}
+\end{solution}
+
