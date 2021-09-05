@@ -59,33 +59,20 @@
         A while loop is run. The termination condition depends on the $index$ variable.
         The loop keeps incrementing index until it finds the index at which arr[index] is not 0.
         \subsection*{Maintenance}
-        For maintenance, we look at the iterations of the while loop. Following are the possible cases which happens in the while loop.\\
-        \\
+        For maintenance, we look at the iterations of the while loop.\\
+        \textbf{smallest = 0:}\\
+        $smallest = 0$ implies that the table is new and there are no people seated on it.\\\\
+        The following cases arise in the if-else block:\\
         \textbf{Case 1:} arr[index] is 0\\
         Here, we move to the next index since there are no people of this age invited to the party.\\
-        \\
         \textbf{Case 2:} age gap between youngest person at table and index is $>10$\\
-        Here, we cannot add the people at this index to the table since it violates our condition of the maximum age gap at table to be 10.\\
-        We increase $tcount$ by 1 and reset values of $smallest$ and $toAdd$ to 0 and 10 respectively.\\
-        \\
-        \textbf{Case 3:} $smallest = 0$\\
-        $smallest = 0$ implies that the table is new and there are no people seated on it.
-        We set the value of smallest as $index$ since the people at current index will be added in the next iteration and will be the youngest for the new table as we are going in increasing order of ages.
-        \\
-        \\
-        \textbf{Case 4:} number of people with age same as index are more than $toAdd$\\
-        In this case, the current table can be filled completely. We subtract the number of people to be added from arr[index] and increment $tcount$ by 1.\\
-        $toAdd$ and $smallest$ are reinitialised.
-        \\
-        \\
-        \textbf{Case 5:} number of people with age same as index are $\leq toAdd$\\
-        Number of people of age same as index is not enough to fill the current table. We still allot them the table and move to next index.\\
-        $toAdd$ is decremented by $arr[index]$\\
-        $arr[index]$ is set to 0.\\
+        Here, we cannot add the people at this index to the table since it violates our condition of the maximum age gap at table to be 10. We increase $tcount$ by 1 and reset values of $smallest$ and $toAdd$ to 0 and 10 respectively.\\
+        \textbf{Case 3:} number of people with age same as index are more than $toAdd$\\
+        In this case, the current table can be filled completely. We subtract the number of people to be added from arr[index] and increment $tcount$ by 1. $toAdd$ and $smallest$ are reinitialised.\\
+        \textbf{Case 4:} number of people with age same as index are $\leq toAdd$\\
+        Number of people of age same as index is not enough to fill the current table. We still allot them the table and move to next index. $toAdd$ is decremented by $arr[index]$. $arr[index]$ is set to 0.\\
         Since last group of statements is an else and no other conditions remain, our maintenance step is complete.
-        \\
-        \\\
-        
+
         \subsection*{Termination and Time Complexity}
         % \begin{enumerate}
             % \item According to the cases mentioned in the previous part, index increases by one when either $arr[index]=0$ or all people of same age are seated i.e in case 1 or case 5.
@@ -94,8 +81,14 @@
             % \item case 3 allots the value of index which has atleast one person of that age to smallest who will be seated on the new table
             % \item It causes either of the case 1, 2, 4, 5 to repeat again.
         % \end{enumerate}
-        In each iteration of the while loop, the value of $index$ increases by $1$ or the total sum of $arr$ decreases by some non
+        In each iteration of the while loop, the value of $index$ increases by $1$ or the total sum of $arr$ decreases by some non-zero number or $tcount$ increments by $1$. Thus, the maximum number of iterations of the loop is bounded by:
+        \begin{equation}
+            \begin{split}
+                100+sum(arr)+\max(tables)&=100+O(n_0)+O(n_0)\\
+                &=O(n_0)
+            \end{split}
+        \end{equation}
+        Therefore, the while loop runs for $O(n_0)$ iterations and each iteration takes $O(1)$ time since 
     \end{proof}
     
 \end{solution}
-

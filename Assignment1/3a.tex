@@ -27,19 +27,31 @@
             \caption{Generate list of invitees for 3.a}
             \begin{algorithmic}[1]
                 \Procedure{Invite}{$G$}
-                    \State{$done=false\gets$ denotes if changes are being made to the people heap}
-                    \While{!done}
+                    \State{initialise $adj$} \Comment{empty hashmap of balanced BSTs created for adjacency list}
+                    \State{initialise $people$} \Comment{empty balanced BST of degree,vertex pairs}
+                    \ForAll{edge e $\{ u, v \}$ in E(G)} \Comment{sets adj}
+                        \State{add v to adj[u]}
+                        \State{add u to adj[v]}
+                    \EndFor{}
+                    \ForAll{vertex v in V(G)} \Comment{sets people}
+                        \State{add (degree(v), v) to people}
+                    \EndFor{}
+                    
+                    \State{$done\gets false$} \Comment{denotes if $people$ is changing}
+                    \While{not $done$}
                         \State{$done\gets$ true}
-                        \If{people is \texttt{empty}}
+                        \If{$people$ is empty}
                             \State{\textbf{break}}
                         \EndIf{}
-                        \State{$i\gets people.begin()$}
-                        \If{$i.first < 5$}
-                            \State{$done\gets 0, deletePerson(i.second)$}
+                        \State{$i\gets start(people)$}
+                        \If{$degree(i) < k$}
+                            \State{$done\gets false$}
+                            \State{$deletePerson(vertex(i))$}
                         \EndIf{}
-                        \State{$i\gets people.rbegin()$}
-                        \If{$people.size()-i.first-1<5$}
-                            \State{$done\gets 0, deletePerson(i.second)$}
+                        \State{$i\gets end(people)$}
+                        \If{$size(people)-degree(i)-1 < k$}
+                            \State{$done\gets false$}
+                            \State{$deletePerson(vertex(i))$}
                         \EndIf{}
                     \EndWhile{}
                     \State{$invitees\gets[]$}
@@ -51,27 +63,39 @@
             \end{algorithmic}
         \end{algorithm}
         
-        The procedure \textit{deletePerson} removes a vertex and modifies all its vertices by popping them, removing specific edge and pushing them back. Time compleity os $O(degree(u)*log(n)$.
+        The procedure $deletePerson$ takes the vertex $u$ into consideration for removal as a parameter and updates the adjacency list $adj$ and $people$. Idea behind the algorithm is to look at all the neighbours of v and remove the edge $\{u,v\}$ from $adj$ and update degree of $v$ in $people$. If degree of $v$ becomes zero, don't add it again.\\
+        Since people is a balanced BST, time complexity of removal and insertion is $O(log|V|)$ because $size(people)=|V|$. Also, adjacency list can be implemented as a hashmap of balanced BSTs, so locationg a vertex $v$ takes $O(1)$ time and removing a vertex $u$ from the hashmap[v] takes $O(log \ degree)$
+        \\
+        Total time complexity of the procedure $deletePerson$ hence becomes
+        \begin{equation}
+            \begin{split}
+                O(degree(u))\times O(\log|V| +\log(degree(v)))+O(\log|V| )
+                &=O(degree(u)\times \log|V|)
+            \end{split}
+        \end{equation}
+
         \begin{algorithm}[H]
             \caption{sub-algorithm for $deletePerson$}
             \begin{algorithmic}[1]
-                \Procedure{deletePerson}{$G$}
-                \ForAll{vertex in neighbours of u}
-                \State{people.erase({adj[v].size(), v})}
-                \State{adj[v].erase(u)}
-                \State{people.insert({adj[v].size(), v})}
+                \Procedure{deletePerson}{$u$}
+                \ForAll{vertex $v$ in neighbours of $u$}
+                \State{remove $\{degree(v), v\}$ from $people$}
+                \State{remove $u$ from $adj(v)$}
+                \If{$degree(v)\neq 0$}
+                    \State{insert $\{degree(v), v\}$ into $people$}
+                \EndIf{}
                 \EndFor
-                \State{people.erase({adj[u].size(), u})}
+                \State{remove $\{degree(u), u\}$ from $people$}
                 \State{\Return{}}
                 \EndProcedure{}
             \end{algorithmic}
         \end{algorithm}
-
-        proof of termination:
-        yems yems\\
-        \\
-        proof of correctness:
-        yems yems\\
+        % @TODO: the following
+        \subsection*{Initialisation}
+        \subsection*{Maintenance}
+        \subsection*{Termination}
+        \subsection*{Validate best solution}
+        
     \end{proof}
 \end{solution}
 
