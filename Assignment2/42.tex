@@ -5,6 +5,43 @@ coins.
     \end{question}
     \tcblower{}
     \begin{proof}[Solution]
-        Proof is left as an exercise.
+        The assumptions made are that the number of coins of every denomination are infinite and they are integral values.\\
+        \begin{algorithm}[H]
+        \caption{Find total possible combinations of denominations to achieve value of n}
+        \begin{algorithmic}
+        \Procedure{LeastCurr}{$denom,n$}
+            \State{$k \gets size(denom)$}   \Comment{number of types of denominations}
+            \State{$dpArr \gets$ array of size $n+1$ initialised with $\infty$}
+            \State{$dpArr[0] \gets 0$} \Comment{Base case: no coin needed $n=0$}
+            \For{$index$ in $[1, n+1]$}
+                \For{$i$ in $[0, k)$}
+                    \If{$index-denom[i]\geq 0$}
+                        \State{$dpArr[index] \gets min(dpArr[index],dpArr[index-denom[i]]+1)$}
+                    \EndIf{}
+                \EndFor{}
+            \EndFor{}
+            \State{\Return{$dpArr[n]$}}
+        \EndProcedure{}
+        \end{algorithmic}
+        \end{algorithm}
     \end{proof}
+    \begin{proof}[Proof of correctness]
+        %@TODO: correctness is boring
+    \end{proof}
+    \begin{proof}[Proof of termination]
+        We iterate through the entire array of size n and exit successfully in any case. Hence the algorithm terminates.
+    \end{proof}
+    \begin{proof}[Time Complexity]
+    Deciding factors for time-complexity in big-Oh notation are going through the entire $dpArray$ and running a for loop of $k$ iterations for each index.\\
+    Time complexity $=O(n\times k)$\\
+    This is a polynomial time solution.
+    \end{proof}
+    \begin{proof}[Space Complexity]
+    We create a $dpArray$ of size $n+1$ and use constant space everywhere else.\\
+    Space complexity $=O(n)$
+    \end{proof}
+% stuff I changed:
+% reversed the order of the loops, that is important to get the correct results (also refer https://usaco.guide/problems/cses-1634-minimizing-coins/solution)
+% corrected the time complexity
+% added space complexity
 \end{solution}

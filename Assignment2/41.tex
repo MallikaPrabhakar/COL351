@@ -3,22 +3,47 @@
         You are given a set of $k$ denominations. Devise a polynomial time algorithm to count the number of ways to make change for Rs.$n$, given an infinite amount of coins/notes of denominations, $d[1], . . . , d[k]$.
     \end{question}
     \tcblower{}
-    \begin{proof}[Assumptions]
-    Following assumptions are made:
-        \begin{enumerate}
-            \item Number of coins of every denomination are infinite
-            \item Denominations are integral values
-            \item Atleast one solution (way of representing $n$) exists
-        \end{enumerate}
-    \end{proof}
+
     \begin{proof}[Solution]
-        We solved this problem using dynamic programming. Given the cost $n$ and array of possible denominations $denom$ with size $m$, we create $dpTable$ which is an $(n+1)\times(m)$ matrix. $Row \ 0$ is used to denote our target state $n=0$ and remaining rows represent intermediate $n$ values and the number of ways particular $i$ value can be obtained after including or excluding current $j$ value i.e. mentioned denomination of the $cell=dpTable[i][j]$.
-        The answer is obtained by observing value of the last cell $dpTable[n][m-1]$.
-    \end{proof}
+        The assumptions made are that the number of coins of every denomination are infinite and they are integral values.\\
+        We solved this problem using dynamic programming. Given the cost $n$ and array of possible denominations $denom$ with size $k$, we create $dpTable$ which is an $(n+1)$ array. $dpTable[i]$ counts the number of ways to generate value $i$ using the given denominations.
+        The answer is obtained by observing value of the last element $dpTable[n]$.
     \begin{algorithm}[H]
         \caption{Find total possible combinations of denominations to achieve value of n}
         \begin{algorithmic}
+        \Procedure{Combinations}{$denom,n$}
+            \State{$k \gets size(denom)$}   \Comment{number of types of denominations}
+            \State{$dpTable \gets $1D-zero array of size $(n+1)$}
+            \State{$dpTable[0]\gets 0$} \Comment{there is trivially one way to generate sum $0$}
+            \For{$i$ in $[1,n+1)$}
+                \For{$j$ in $[1,k+1)$}
+                    \If{$i \geq denom[j]$}  \Comment{denomination should not be greater than i}
+                        \State{$dpTable[i] \gets dpTable[i]+dpTable[i-denom[j]]$}
+                    \EndIf{}
+                \EndFor{}
+            \EndFor{}
+            \State{\Return{$dpTable[n][k]$}}
+        \EndProcedure{}
         \end{algorithmic}
     \end{algorithm}
+    \end{proof}
+    \begin{proof}[Proof of correctness]
+        %@TODO: correctness is boring
+    \end{proof}
+    \begin{proof}[Proof of termination]
+        Here, we have a finite table of size $(n+1)$. We iterate through the entire table and exit successfully in any case. Hence the algorithm terminates.
+    \end{proof}
+    \begin{proof}[Time Complexity]
+    Deciding factors for time-complexity in big-Oh notation are going through the entire $dpTable$ and running a for loop with $k$ iterations at each index of the table.
+    Time complexity $=O(n\times k)$\\
+    This is a polynomial time solution.
+    \end{proof}
+    \begin{proof}[Space Complexity]
+    We create a $dpTable$ of size $n+1$ and use constant space everywhere else.\\
+    Space complexity $=O(n)$
+    \end{proof}
+% aaaa finally figured out the confusion that was bothering me
+% 2D DP is needed if you want permutations https://codeforces.com/blog/entry/70018
+% look at the difference in the code for Coin Combinations I and II
 
 \end{solution}
