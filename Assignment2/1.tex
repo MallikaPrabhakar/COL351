@@ -1,0 +1,88 @@
+% idea:
+% - create dp(i, s1, s2) such that dp(i, s1, s2) is true if we can partition S[1:i] into sets with sums s1, s2, sum(S[1:i]) - (s1 + s2)
+% - to find optimal set, iterate over s1, s2 and find min(max(s1, s2, sum(S) - (s1 + s2)))
+% - from this value, backtrack to find the optimal partitioning
+\begin{solution}{Question 1}\label{ques:1}
+    \begin{question}
+        Alice, Bob, and Charlie have decided to solve all exercises of the Algorithms Design book by Jon Kleinberg, Éva Tardos. There are a total of $n$ chapters, $[1, \ldots, n]$, and for $i\in [1, n]$, $x_i$ denotes the number of exercises in chapter $i$. It is given that the maximum number of questions in each chapter is bounded by the number of chapters in the book. Your task is to distribute the chapters among Alice, Bob, and Charlie so that each of them gets to solve nearly an equal number
+        of questions.\par
+        Device a polynomial time algorithm to partition $[1, \ldots, n]$ into three sets $S_1, S_2, S_3$ so that $\max\{\sum_{i\in S_1}{x_i}, \sum_{i\in S_2}{x_i}, \sum_{i\in S_3}{x_i}\}$ is minimized.
+    \end{question}
+    \tcblower{}
+    \begin{proof}[Solution]
+        We propose a \textit{Dynamic Programming} solution for this problem. The idea is to generate all possible combinations of $S_1, S_2, S_3$ and then find the best combination of out them. The na\"{\i}ve solution will have an exponential complexity ($O(3^n)$) and hence it needs to be modified so that it can be executed in polynomial time complexity.\\
+        We make the following observations to optimise our solution:
+        \begin{enumerate}
+            \item To find the optimal parititon of $S$, only the sum of each of $S_1, S_2, S_3$ matters
+            \item Order of picking elements for each set doesn't affect the solution
+            \item Fixing the sum of $S_1$ and $S_2$ uniquely identifies the sum of $S_3$
+        \end{enumerate}
+        Using these observations we come up with the following DP table:
+        \begin{equation}\label{eq:dp_q1}
+            \begin{split}
+                dp(i, s1, s2) &= dp(i-1, s1-S[i], s2)\vee dp(i-1, s1, s2-S[i])\vee dp(i-1, s1, s2)\\
+                &\forall i\in \{1, \ldots, n\}; s1, s2\in\{1, \ldots, sum(S)\}\\
+                dp(i, p, q) &= \bot,\ \forall i\in \{1, \ldots, n\}; p, q < 0\\
+                dp(0, 0, 0) &= \top
+            \end{split}
+        \end{equation}
+        where $dp(i, s1, s2)$ is $\top$ if we can generate atleast one partition using the first $i$ elements such that any two partitions have sums $s1$ and $s2$
+        \begin{claim}
+            The dp table generated using the Equation~\ref{eq:dp_q1} is correct, i.e., $dp(i, s1, s2)=\top$ iff there exists a partition using the first $i$ elements with sums $s1, s2, sum(S[1:i])-(s1+s2)$
+        \end{claim}
+        \begin{proof}
+            We will prove the correctness of the claim by induction on $i$.\\
+            \textbf{Base case:} $i=0$\\
+            $dp(0, s1, s2)$ is $\top$ only when $s1=s2=0$ and $\bot$ otherwise. We know that we can generate only three empty sets using the first $0$ elements and thus their sums will all be $0$. Therefore the base case is true.\\
+            \textbf{Induction step:} Assume that the claim is true for $i-1$. Consider $dp(i, s1, s2)$,\\
+            The $i\textsuperscript{th}$ element will be present in exactly one of $S_1, S_2, S_3$. Therefore, we have three cases:
+            \begin{enumerate}
+                \item $S[i]$ is in $S_1$, then the sum of $S_1$ upto the first $i-1$ elements will be $s1-S[i]$ and the sum of the other two sets doesn't change
+                \item $S[i]$ is in $S_2$, then the sum of $S_2$ upto the first $i-1$ elements will be $s2-S[i]$ and the sum of the other two sets doesn't change
+                \item $S[i]$ is in $S_3$, then the sum of $S_3$ upto the first $i-1$ elements will be $sum(S[1:(i-1)])-(s1+s2)$ and the sum of the other two sets doesn't change
+            \end{enumerate}
+            Thus, the only possibilities for valid partition sums using the first $i$ elements are exactly those when we can generate atleast one of the above three parititons using the first $i-1$ elements. The transition equation given in Equation~\ref{eq:dp_q1} exactly captures this. We have shown that for $dp(i, s1, s2)$ to be $\top$, atleast one of $dp(i-1, s1-S[i], s2), dp(i-1, s1, s2-S[i]), dp(i-1, s1, s2)$ must be $\top$. From induction, we know that the
+            $(i-1)\textsuperscript{th}$ row of the table is true iff there exists a valid parititon. Therefore, if $dp(i, s1, s2)=\top$ then there exists a partition using the first $i$ elements with sums $s1, s2, sum(S[1:i])-(s1+s2)$. ($\implies$)\\
+
+            We still have to prove the converse, i.e., if there exists a partition using the first $i$ elements with sums $s1, s2, sum(S[1:i])-(s1+s2)$, then $dp(i, s1, s2)=\top$.\\
+            To prove this, we observe that the $dp$ table considers all possible sums since $s1, s2$ iterate in the range $\{1, \ldots, sum(S)\}$. Therefore, if there exists a valid solution, the $dp$ table considers it and is assigned $\top$. Else it is assigned $\bot$. ($\Longleftarrow$)
+        \end{proof}
+        Now that we have proved the correctness of Equation~\ref{eq:dp_q1}, we present an algorithm for computing the same:
+        \begin{algorithm}[H]
+            \caption{DP solution for partitioning}
+            \begin{algorithmic}
+                \Procedure{Partition}{$S$}
+                    \State{$n\gets size(S)$}
+                    \State{$s\gets sum(S)$}
+                    \State{$dp\gets$ table of size $(n+1)\times (s+1)\times (s+1)$ initialised with $\bot$}
+                    \State{$dp(0, 0, 0)\gets \top$}
+                    \For{$i$ in $[1, n]$}
+                        \For{$s1$ in $[0, s]$}
+                            \For{$s2$ in $[0, s]$}
+                                \State{$dp(i, s1, s2)\gets dp(i-1, s1, s2)$}
+                                \If{$s1\geq S[i]$}
+                                    \State{$dp(i, s1, s2)\gets dp(i, s1, s2)\vee dp(i-1, s1-S[i], s2)$}
+                                \EndIf{}
+                                \If{$s2\geq S[i]$}
+                                    \State{$dp(i, s1, s2)\gets dp(i, s1, s2)\vee dp(i-1, s1, s2-S[i])$}
+                                \EndIf{}
+                            \EndFor{}
+                        \EndFor{}
+                    \EndFor{}
+                    \State{}
+                    \State{$bestPair\gets (-1, -1)$}
+                    \State{$leastMax\gets \infty$}
+                    \ForAll{$(s1, s2)\in [0, s]\times[0, s]$}
+                        \If{$\max(s1, s2, s-(s1+s2))<leastMax$}
+                            \State{$leastMax\gets\max(s1, s2, s-(s1+s2))$}
+                            \State{$bestPair\gets(s1, s2)$}
+                        \EndIf{}
+                    \EndFor{}
+
+                    \State{\Return{$backtrack(dp, bestPair)$}}    \Comment{return the partition after backtracking on the DP table}
+                \EndProcedure{}
+            \end{algorithmic}
+        \end{algorithm}
+        % TODO explain backtracking and write algo, state time and space complexities
+    \end{proof}
+\end{solution}

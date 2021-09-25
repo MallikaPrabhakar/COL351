@@ -12,6 +12,10 @@
 \usepackage[most]{tcolorbox}
 \usepackage[colorlinks=true,linkcolor=darkcyan,filecolor=darkcerulean,urlcolor=magenta]{hyperref}
 
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem*{question}{Question}
+
 \newtcolorbox{solution}[2][]{breakable,enhanced,adjusted title={#2},colback=codegray,colframe=codegray!50!black}
 
 \linespread{1.0}
@@ -33,10 +37,12 @@
 
 \pagenumbering{arabic}
 
+\newpage
 \section{Question 1}
 
 \input{1}
 
+\newpage
 \section{Question 2}
 
 \subsection{2.1}
@@ -49,6 +55,7 @@
 \input{23}
 
 
+\newpage
 \section{Question 3}
 
 \subsection{3.1}
@@ -58,6 +65,7 @@
 \input{32}
 
 
+\newpage
 \section{Question 4}
 
 \subsection{4.1}
