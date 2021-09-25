@@ -1,9 +1,24 @@
 \begin{solution}{4.1}
-    \begin{question}[]
-        insert question    
+    \begin{question}
+        You are given a set of $k$ denominations. Devise a polynomial time algorithm to count the number of ways to make change for Rs.$n$, given an infinite amount of coins/notes of denominations, $d[1], . . . , d[k]$.
     \end{question}
     \tcblower{}
-    \begin{proof}[Solution]
-        Proof is left as an exercise.
+    \begin{proof}[Assumptions]
+    Following assumptions are made:
+        \begin{enumerate}
+            \item Number of coins of every denomination are infinite
+            \item Denominations are integral values
+            \item Atleast one solution (way of representing $n$) exists
+        \end{enumerate}
     \end{proof}
+    \begin{proof}[Solution]
+        We solved this problem using dynamic programming. Given the cost $n$ and array of possible denominations $denom$ with size $m$, we create $dpTable$ which is an $(n+1)\times(m)$ matrix. $Row \ 0$ is used to denote our target state $n=0$ and remaining rows represent intermediate $n$ values and the number of ways particular $i$ value can be obtained after including or excluding current $j$ value i.e. mentioned denomination of the $cell=dpTable[i][j]$.
+        The answer is obtained by observing value of the last cell $dpTable[n][m-1]$.
+    \end{proof}
+    \begin{algorithm}[H]
+        \caption{Find total possible combinations of denominations to achieve value of n}
+        \begin{algorithmic}
+        \end{algorithmic}
+    \end{algorithm}
+
 \end{solution}
