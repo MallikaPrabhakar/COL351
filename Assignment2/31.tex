@@ -1,0 +1,78 @@
+\begin{solution}{Question 3.1}
+    \begin{question}
+        Design an algorithm to verify whether or not there exists a cycle $(c_{i_1}, \ldots, c_{i_k}, c_{i_{k+1}} = c_{i_1})$ such that exchanging money over this cycle results in positive gain, or equivalently, the product $R(i_1, i_2)\cdot R(i_2, i_3)\cdots R(i_{k-1}, i_k)\cdot R(i_k, i_1)$ is larger than $1$.
+    \end{question}
+    \tcblower{}
+    \begin{proof}[Solution]
+        Consider the transformation function $t:\mathbb{R}^{+}\to\mathbb{R}$,
+        \begin{equation}
+            t(x)=-\log(x)
+        \end{equation}
+        We observe that $t$ is a strictly decreasing function. Applying this tranformation function on the edges in the given graph $G$ (the function can be applied since all edges $R(i, j)$ are positive), we get the condition for \textit{positive gain} as:
+        \begin{equation}
+            \begin{split}
+                &R(i_1, i_2)\cdot R(i_2, i_3)\cdots R(i_{k-1}, i_k)\cdot R(i_k, i_1) > 1\\
+                \iff&t(R(i_1, i_2)\cdot R(i_2, i_3)\cdots R(i_{k-1}, i_k)\cdot R(i_k, i_1)) < t(1)\\
+                \iff&\sum_{j=1}^k{t(R(i_j, i_{j+1}))} < 0
+            \end{split}
+        \end{equation}
+        Therefore, after applying the transformation on the edges, our problem reduces to finding a cycle of negative weight in the graph $G$.\\
+        We assume that the given graph is strongly connected, since it makes sense to be able to perform currency exchange between any two currencies $i, j$. This ensures that all cycles present in $G$ are accessibe from any vertex $i$. To find a cycle of negative weight, we will run Bellman Ford algorithm for $|V|=n$ iterations and if there is a change in the distances between any pair of the vertices in the last iteration, we will report detection of cycle with negative weight.\\
+        \begin{algorithm}[H]
+            \caption{Detect cycle with negative weight}\label{alg:cycle}
+            \begin{algorithmic}[1]
+                \Procedure{DetectCycle}{$G$}
+                    \State{$u\gets$ any vertex of $G$}
+                    \State{$n\gets |V|$}
+                    \State{$d\gets$ array of size $n$ initialised with $\infty$}
+                    \State{$d[u]\gets 0$}
+                \algstore{cycle}
+            \end{algorithmic}
+        \end{algorithm}
+        \begin{algorithm}[H]
+            \begin{algorithmic}[1]
+                \algrestore{cycle}
+                    \For{$i$ in $[1, n-1]$}
+                        \ForAll{$(x, y)\in E$}
+                            \If{$d[y] > d[x]+t(R(x, y))$}
+                                \State{$d[y]\gets d[x]+t(R(x, y))$}
+                            \EndIf{}
+                        \EndFor{}
+                    \EndFor{}
+                    \ForAll{$(x, y)\in E$}
+                        \If{$d[y] > d[x]+t(R(x, y))$}
+                            \State{\Return{True}}
+                        \EndIf{}
+                    \EndFor{}
+                    \State{\Return{False}}
+                \EndProcedure{}
+            \end{algorithmic}
+        \end{algorithm}
+        To prove the correctness of the above algorithm, we will prove the following claim:
+        \begin{claim}\label{claim:lessn}
+            There exists a walk of shortest length from a source vertex $u$ to a vertex $v$ using atmost $n-1$ edges if there is no cycle of negative weight.
+        \end{claim}
+        \begin{proof}
+            Let $G$ have no cycle of negative weight. Now, consider a walk $W$ of shortest length using more than $n-1$ edges. If no such walk exists then we have trivially proved the claim. Since $W$ uses more than $n-1$ edges, there exists a vertex $w$ which appears atleast twice in $W$. Let the walk and its length be given as:
+            \begin{equation}
+                \begin{split}
+                    W &= \{u, \ldots, w, x_1, \ldots, x_k, w, \ldots, v\}\\
+                    \implies d(W) &= length(\{u, \ldots, w\}) + length(\{w, x_1, \ldots, x_k, w\}) + length(\{w, \ldots, v\})
+                \end{split}
+            \end{equation}
+            Now consider the length of walk $W'$ given by $\{u, \ldots, w, \ldots, v\}$ (after removing the cycle at $w$):
+            \begin{equation}
+                \begin{split}
+                    d(W') &= length(\{u, \ldots, w\}) + length(\{w, \ldots, v\})\\
+                    \implies d(W') &= d(W) - length(\{w, x_1, \ldots, x_k, w\})\\
+                    \implies d(W') &\leq d(W)\text{, no negative cycle exists in }G\\
+                    \implies d(W') &= d(W)\text{, $d(W)$ is the shortest length of any walk}
+                \end{split}
+            \end{equation}
+            We know that $|E(W')|<|E(W)|$ and thus we have found another walk of shortest length using lesser number of edges than $W$. Note that $W'$ might still use more than $n-1$ edges. Now, we repeat the above procedure to obtain a walk $W_0$ such that no vertex in $W_0$ appears twice. Therefore, $|E(W_0)|\leq n-1$. Therefore, we have found the walk of shortest length using atmost $n-1$ edges. This completes the proof of the claim.
+        \end{proof}
+        Now, if $G$ has no cycle of negative weight, then Algorithm~\ref{alg:cycle} will have no improvement in the last \texttt{for} loop, using Claim~\ref{claim:lessn}. Additionally, by the contrapositive of Claim~\ref{claim:lessn}, there will be an update in the $n\textsuperscript{th}$ iteration given by lines $13-18$ of Algorithm~\ref{alg:cycle}.\\
+
+        \textbf{Time and Space Complexities:} The time and space complexities of the algorithm are identical to those of the Bellman-Ford algorithm. The time complexity is $O(|V|\times|E|)$ and the space complexity is $O(|V|)$.
+    \end{proof}
+\end{solution}
