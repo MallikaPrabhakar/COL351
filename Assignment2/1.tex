@@ -27,7 +27,7 @@
             \end{split}
         \end{equation}
         where $dp(i, s1, s2)$ is $\top$ if we can generate atleast one partition using the first $i$ elements such that any two partitions have sums $s1$ and $s2$
-        \begin{claim}
+        \begin{claim}\label{claim:dp_q1}
             The dp table generated using the Equation~\ref{eq:dp_q1} is correct, i.e., $dp(i, s1, s2)=\top$ iff there exists a partition using the first $i$ elements with sums $s1, s2, sum(S[1:i])-(s1+s2)$
         \end{claim}
         \begin{proof}
@@ -49,8 +49,8 @@
         \end{proof}
         Now that we have proved the correctness of Equation~\ref{eq:dp_q1}, we present an algorithm for computing the same:
         \begin{algorithm}[H]
-            \caption{DP solution for partitioning}
-            \begin{algorithmic}
+            \caption{DP solution for partitioning}\label{alg:dp_q1}
+            \begin{algorithmic}[1]
                 \Procedure{Partition}{$S$}
                     \State{$n\gets size(S)$}
                     \State{$s\gets sum(S)$}
@@ -69,20 +69,62 @@
                             \EndFor{}
                         \EndFor{}
                     \EndFor{}
-                    \State{}
+                \algstore{dp_q1}
+            \end{algorithmic}
+        \end{algorithm}
+        \begin{algorithm}[H]
+            \begin{algorithmic}[1]
+                \algrestore{dp_q1}
                     \State{$bestPair\gets (-1, -1)$}
                     \State{$leastMax\gets \infty$}
                     \ForAll{$(s1, s2)\in [0, s]\times[0, s]$}
-                        \If{$\max(s1, s2, s-(s1+s2))<leastMax$}
+                        \If{$dp(n, s1, s2)=\top$ and $\max(s1, s2, s-(s1+s2))<leastMax$}
                             \State{$leastMax\gets\max(s1, s2, s-(s1+s2))$}
                             \State{$bestPair\gets(s1, s2)$}
                         \EndIf{}
                     \EndFor{}
-
-                    \State{\Return{$backtrack(dp, bestPair)$}}    \Comment{return the partition after backtracking on the DP table}
+                    \State{\Return{$Backtrack(dp, S, bestPair)$}}    \Comment{return the partition after backtracking on the DP table}
                 \EndProcedure{}
             \end{algorithmic}
         \end{algorithm}
-        % TODO explain backtracking and write algo, state time and space complexities
+        The \texttt{Backtrack} routine used in the last step generates the partitions which give the optimal values of the sum. It is given as:
+        \begin{algorithm}[H]
+            \caption{Backtracking to generate parition}\label{alg:backtrack}
+            \begin{algorithmic}
+                \Procedure{Backtrack}{$dp, S, (s1, s2)$}
+                    \State{$n\gets size(S)$}
+                    \State{$S_1\gets\{\}$}
+                    \State{$S_2\gets\{\}$}
+                    \State{$S_3\gets\{\}$}
+                    \For{$i$ in $[n, 1]$}
+                        \If{$s1\geq S[i]$ and $dp(i-1, s1-S[i], s2)=\top$}
+                            \State{$S_1\gets add(S_1, i)$}
+                            \State{$s1\gets s1-S[i]$}
+                        \ElsIf{$s2\geq S[i]$ and $dp(i-1, s1, s2-S[i])=\top$}
+                            \State{$S_2\gets add(S_2, i)$}
+                            \State{$s2\gets s2-S[i]$}
+                        \Else{}
+                            \State{$S_3\gets add(S_3, i)$}
+                        \EndIf{}
+                    \EndFor{}
+                    \State{\textbf{assert} ($s1=0$ and $s2=0$)}
+                    \State{\Return{$(S_1, S_2, S_3)$}}
+                \EndProcedure{}
+            \end{algorithmic}
+        \end{algorithm}
+        We have shown the correctness of the DP table in Claim~\ref{claim:dp_q1}, therefore, to prove correctness of Algorithm~\ref{alg:dp_q1}, we need to show the correctness of the \texttt{for} loop from lines $21-26$ and Algorithm~\ref{alg:backtrack}. The \texttt{for} loop iterates over all possible states of $(s1, s2)$ and finds the best state out of the valid states (where $dp(i, s1, s2)=\top$). Since the states explored by the \texttt{for} loop are exhaustive, the optimal
+        solution is selected.\\
+        To prove the correctness of Algorithm~\ref{alg:backtrack}, we notice that $dp(i, s1, s2)$ is $\top$ only if there exists a valid partitioning. Therefore, when updating $i, s1, s2$ in the \texttt{for} loop, we move from one valid partition to another. Therefore, Algorithm~\ref{alg:backtrack} generates the correct partitioning. This completes the proof of correctness for Algorithm~\ref{alg:dp_q1}.\\
+
+        \textbf{Space complexity:} We create a $dp$ table of size $(n+1)\times(s+1)\times(s+1)$ in Algorithm~\ref{alg:dp_q1} and we generate the sets $S_1, S_2, S_3$ which have a total size of $n$ in Algorithm~\ref{alg:backtrack}. We use constant space everywhere else. Therefore the total space complexity of the solution is
+        \begin{equation}
+            O(n\times s\times s) + O(n) = O(n\times s^2) = O(n\times {(n\times\max(S))}^2) = O(n\times {(n\times n)}^2) = O(n^5)
+        \end{equation}
+        \textbf{Time complexity:} We run nested \texttt{for} loop in Algorithm~\ref{alg:dp_q1} (lines $6-18$) having a total of $n\times(s+1)\times(s+1)$ iterations and each iteration taking $O(1)$ time. We run another \texttt{for} loop (lines $21-26$) which has $(s+1)\times(s+1)$ iterations and each iteration again takes $O(1)$ time. We run a \texttt{for} loop of $n$ iterations in Algorithm~\ref{alg:backtrack} and each iteration takes $O(1)$ time ($add$ can be implemented in $O(1)$
+        using a list or vector). All other operations take $O(1)$. Therefore the total time complexity is given by:
+        \begin{equation}
+            O(n\times s\times s) + O(s\times s) + O(n) = O(n\times s^2) = O(n^5)
+        \end{equation}
+        We have thus obtained a polynomial time algorithm for parititoning the given set $S$ into $S_1, S_2, S_3$ such that $\max\{\sum_{i\in S_1}{x_i}, \sum_{i\in S_2}{x_i}, \sum_{i\in S_3}{x_i}\}$ is minimized.
     \end{proof}
 \end{solution}
