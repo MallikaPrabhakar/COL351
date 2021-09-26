@@ -5,43 +5,46 @@ coins.
     \end{question}
     \tcblower{}
     \begin{proof}[Solution]
-        The assumptions made are that the number of coins of every denomination are infinite and they are integral values.\\
+        The assumptions made are that the number of coins of every denomination are infinite and they are integral values.
         \begin{algorithm}[H]
-        \caption{Find total possible combinations of denominations to achieve value of n}
-        \begin{algorithmic}
-        \Procedure{LeastCurr}{$denom,n$}
-            \State{$k \gets size(denom)$}   \Comment{number of types of denominations}
-            \State{$dpArr \gets$ array of size $n+1$ initialised with $\infty$}
-            \State{$dpArr[0] \gets 0$} \Comment{Base case: no coin needed $n=0$}
-            \For{$index$ in $[1, n+1]$}
-                \For{$i$ in $[0, k)$}
-                    \If{$index-denom[i]\geq 0$}
-                        \State{$dpArr[index] \gets min(dpArr[index],dpArr[index-denom[i]]+1)$}
-                    \EndIf{}
+            \caption{Find minimum number of denominations to achieve value of $n$}\label{alg:min}
+            \begin{algorithmic}
+            \Procedure{LeastCurr}{$denom,n$}
+                \State{$k \gets size(denom)$}   \Comment{number of types of denominations}
+                \State{$dpArr \gets$ array of size $n+1$ initialised with $\infty$}
+                \State{$dpArr[0] \gets 0$} \Comment{Base case: no coin needed $n=0$}
+                \For{$index$ in $[1, n]$}
+                    \For{$i$ in $[1, k]$}
+                        \If{$index-denom[i]\geq 0$}
+                            \State{$dpArr[index] \gets \min(dpArr[index],dpArr[index-denom[i]]+1)$}
+                        \EndIf{}
+                    \EndFor{}
                 \EndFor{}
-            \EndFor{}
-            \State{\Return{$dpArr[n]$}}
-        \EndProcedure{}
-        \end{algorithmic}
+                \State{\Return{$dpArr[n]$}}
+            \EndProcedure{}
+            \end{algorithmic}
         \end{algorithm}
     \end{proof}
     \begin{proof}[Proof of correctness]
-        %@TODO: correctness is boring
+        We will prove the correctness of Algorithm~\ref{alg:min} using induction on the value $i$.\\
+        \textbf{Base case:} $i=0$ is true since we can generate a sum $0$ using $0$ coins.\\
+        \textbf{Inductive step:} Assume that the claim is true for $i-1$. Consider the sum $i$\\
+        The last denomination used to generate the sum $i$ has to be one of the denominations $denom[j]$ such that $i\geq denom[j]$. Therefore, the minimum number of coins needed to generate $i$ will be one more than the least number of coins needed to generate the sum $i-denom[j]$ for all valid $j$. Therefore the transition equation is given by:
+        \begin{equation}
+            dp(i) = 1 + \underset{j|i\geq denom[j]}\min dp(i-denom[j])
+        \end{equation}
+        Therefore we have shown the claim to be true for $i$ and this completes the proof of induction and hence the correctness of Algorithm~\ref{alg:min}
+        \begin{proof}[Proof of termination]
+            We iterate through the entire array of size n and exit successfully in any case. Hence the algorithm terminates.
+        \end{proof}
+        \begin{proof}[Time Complexity]
+        Deciding factors for time-complexity in big-Oh notation are going through the entire $dpArray$ and running a for loop of $k$ iterations for each index.\\
+        Time complexity $=O(n\times k)$\\
+        This is a polynomial time solution.
+        \end{proof}
+        \begin{proof}[Space Complexity]
+        We create a $dpArray$ of size $n+1$ and use constant space everywhere else.\\
+        Space complexity $=O(n)$
+        \end{proof}
     \end{proof}
-    \begin{proof}[Proof of termination]
-        We iterate through the entire array of size n and exit successfully in any case. Hence the algorithm terminates.
-    \end{proof}
-    \begin{proof}[Time Complexity]
-    Deciding factors for time-complexity in big-Oh notation are going through the entire $dpArray$ and running a for loop of $k$ iterations for each index.\\
-    Time complexity $=O(n\times k)$\\
-    This is a polynomial time solution.
-    \end{proof}
-    \begin{proof}[Space Complexity]
-    We create a $dpArray$ of size $n+1$ and use constant space everywhere else.\\
-    Space complexity $=O(n)$
-    \end{proof}
-% stuff I changed:
-% reversed the order of the loops, that is important to get the correct results (also refer https://usaco.guide/problems/cses-1634-minimizing-coins/solution)
-% corrected the time complexity
-% added space complexity
 \end{solution}
