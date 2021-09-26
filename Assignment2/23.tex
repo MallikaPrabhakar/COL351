@@ -1,9 +1,44 @@
 \begin{solution}{2.3}
     \begin{question}
-        insert question    
+        Suppose for a course $c\in C$, $L(c)$ denotes the list of all the courses that must be completed before crediting $c$. Design an $O(n^3)$ time algorithm to compute the set $P \subseteq C \times C$ of all those pairs $(c, c')$ for which the intersection $L(c) \cap L(c')$ is empty. 
     \end{question}
     \tcblower{}
     \begin{proof}[Solution]
-        Proof is left as an exercise.
+        We propose the following algorithm to compute the set $P$:
+        \begin{algorithm}[H]
+            \caption{Computing set $P$}\label{alg:P}
+            \begin{algorithmic}[1]
+                \Procedure{ComputeP}{$G$}
+                    \State{$G'\gets reverse(G)$} \Comment{reverse all edges in $G$}
+                    \State{$L\gets$ empty map}
+                    \ForAll{$c\in C$}
+                        \State{$L(c)\gets DFS(G, c)$}  \Comment{Utility DFS function which returns list of nodes that can be visited by c}
+                        \State{$L(c)\gets sort(L(c))$}  \Comment{Sort the elements in $L(c)$ using counting sort}
+                    \EndFor{}
+                    \State{$P\gets\{\}$}
+                    \ForAll{$(c_1, c_2)\in C\times C$}
+                        \If{$L(c_1)\cap L(c_2)=\phi$}
+                            \State{$P\gets add(P, (c_1, c_2))$}
+                        \EndIf{}
+                    \EndFor{}
+                    \State{\Return{$P$}}
+                \EndProcedure{}
+            \end{algorithmic}
+        \end{algorithm}
+        We assume that the given graph $G$ is a DAG.\\
+        After we reverse the edges in $G$, we have edges from a course $c$ to its pre-requisites and the new graph $G'$ is also a DAG\@. Therefore, running DFS on this graph, we will reach all courses that need to be completed before we can credit course $c$. This can be shown recursively to be true since to credit $c$, we need to credit all its children first and then we can credit $c$ (structural induction). Therefore we can perform a DFS from each node $c$ in $G'$ to obtain $L(c)$.\\
+        Now, since there are only $n$ nodes in $G'$, we can map each node to a number from $\{1, 2, \ldots, n\}$ and thus on performing counting sort on $L(c)$, we can efficiently compute the sorted version of $L(c)$ (complete analysis will be done along with computing time complexity). We then iterate over all pairs $(c_1, c_2)$ in the graph $G'$ and compute the intersection of $L(c_1)$ and $L(c_2)$. If this intersection is $\phi$, we add $(c_1, c_2)$ to the set $P$.\\
+
+        \textbf{Space Complexity:} $L(c)$ will have $O(n)$ elements and since we compute $L(c)$ for all nodes, $L$ will take a space of $O(n^2)$. The set $P$ will have atmost $O(n^2)$ elements. The space used everywhere else is $O(1)$. Therefore the total space complexity of Algorithm~\ref{alg:P} is $O(n^2)$.\\
+        \textbf{Time Complexity:}
+        \begin{enumerate}
+            \item Reversing the edges in $G$ can be done in $O(n+m)=O(n+n^2)=O(n^2)$ time since we are using adjacency list format to represent the graph $G$.
+            \item DFS for each node takes $O(n+m)=O(n^2)$ time. Since there are $n$ nodes, running DFS for all nodes takes $O(n^3)$ time.
+            \item Sorting each $L(c)$ can be done in $O(size(L(c))+\max(L(c)))=O(n+n)=O(n)$ time. Therefore sorting $L(c)$ for all $c\in C$ will take $O(n^2)$ time.
+            \item Iterating over all pairs of $(c_1, c_2)$ will involve $O(n^2)$ iterations. Computing intersection of $L(c_1)$ and $L(c_2)$ can be done in $O(size(L(c_1))+size(L(c_2)))=O(n+n)=O(n)$ time since all $L(c)$ are sorted (using a strategy similar to that of merging two arrays). Therefore computing $P$ will take $O(n^3)$ steps.
+        \end{enumerate}
+        Therefore the total time complexity of Algorithm~\ref{alg:P} is $O(n^3)$.\\
+
+        Thus, we have proposed an $O(n^3)$ solution to compute set $P$ and have also argued its correctness.
     \end{proof}
 \end{solution}
