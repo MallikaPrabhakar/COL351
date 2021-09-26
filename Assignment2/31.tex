@@ -1,4 +1,4 @@
-\begin{solution}{Question 3.1}
+\begin{solution}{Question 3.1}\label{sol:31}
     \begin{question}
         Design an algorithm to verify whether or not there exists a cycle $(c_{i_1}, \ldots, c_{i_k}, c_{i_{k+1}} = c_{i_1})$ such that exchanging money over this cycle results in positive gain, or equivalently, the product $R(i_1, i_2)\cdot R(i_2, i_3)\cdots R(i_{k-1}, i_k)\cdot R(i_k, i_1)$ is larger than $1$.
     \end{question}
@@ -73,6 +73,6 @@
         \end{proof}
         Now, if $G$ has no cycle of negative weight, then Algorithm~\ref{alg:cycle} will have no improvement in the last \texttt{for} loop, using Claim~\ref{claim:lessn}. Additionally, by the contrapositive of Claim~\ref{claim:lessn}, there will be an update in the $n\textsuperscript{th}$ iteration given by lines $13-18$ of Algorithm~\ref{alg:cycle}.\\
 
-        \textbf{Time and Space Complexities:} The time and space complexities of the algorithm are identical to those of the Bellman-Ford algorithm. The time complexity is $O(|V|\times|E|)$ and the space complexity is $O(|V|)$.
+        \textbf{Time and Space Complexities:} The time and space complexities of the algorithm are identical to those of the Bellman-Ford algorithm. The time complexity is $O(n\times m)$ and the space complexity is $O(n)$.
     \end{proof}
 \end{solution}

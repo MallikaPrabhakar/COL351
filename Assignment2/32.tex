@@ -1,0 +1,77 @@
+\begin{solution}{Question 3.2}
+    \begin{question}
+        Present a cubic time algorithm to print out such a cyclic sequence if it exists.
+    \end{question}
+    \tcblower{}
+    \begin{proof}[Solution]
+        We will modify the solution proposed in Question~\ref{sol:31} to also return the cycle of negative weight if one exists. 
+        \begin{algorithm}[H]
+            \caption{Detect and return cycle with negative weight}\label{alg:findcycle}
+            \begin{algorithmic}[1]
+                \Procedure{FindCycle}{$G$}
+                    \State{$u\gets$ any vertex of $G$}
+                    \State{$n\gets |V|$}
+                    \State{$d\gets$ array of size $n$ initialised with $\infty$}    \Comment{distance array}
+                    \State{$p\gets$ array of size $n$ initialised with \texttt{null}}   \Comment{parent array}
+                    \State{$d[u]\gets 0$}
+                    \For{$i$ in $[1, n-1]$}
+                        \ForAll{$(x, y)\in E$}
+                            \If{$d[y] > d[x]+t(R(x, y))$}
+                                \State{$d[y]\gets d[x]+t(R(x, y))$}
+                                \State{$p[y]\gets x$}
+                            \EndIf{}
+                        \EndFor{}
+                    \EndFor{}
+                    \State{$v\gets$ \texttt{null}}
+                    \ForAll{$(x, y)\in E$}
+                        \If{$d[y] > d[x]+t(R(x, y))$}
+                            \State{$d[y]\gets d[x]+t(R(x, y))$}
+                            \State{$p[y]\gets x$}
+                            \State{$v\gets y$}
+                        \EndIf{}
+                    \EndFor{}
+                    \If{$v=$ \texttt{null}}
+                        \State{\Return{\texttt{null}}}
+                    \EndIf{}
+                    \For{$i$ in [1, n]}
+                        \State{$v\gets p[v]$}
+                    \EndFor{}
+                    \State{$C\gets\{v\}$}
+                    \State{$w\gets p[v]$}
+                \algstore{cycle}
+            \end{algorithmic}
+        \end{algorithm}
+        \begin{algorithm}[H]
+            \begin{algorithmic}[1]
+                \algrestore{cycle}
+                    \While{$w\neq v$}
+                        \State{$C\gets add(C, w)$}
+                        \State{$w\gets p[w]$}
+                    \EndWhile{}
+                    \State{$C\gets reverse(C)$}
+                    \State{\Return{$C$}}
+                \EndProcedure{}
+            \end{algorithmic}
+        \end{algorithm}
+        To prove the correctness of Algorithm~\ref{alg:findcycle}, we notice that the algorithm is the same until line $22$ except for the addition of array $p$ and maintaining an additional variable $v$. The array $p$ generates the \textit{parent} array which denotes that the shortest path from $u$ to any vertex $v$ is exactly equal to the shortest path from $u$ to $p[v]$ and the edge $(p[v], v)$. This is trivially true using the construction of the Bellman-Ford algorithm.\\
+        Now, we find any vertex $v$ which can be reached from $u$ after passing through a cycle of negative weight. If no such vertex is found then we report the same. Else, a negative cycle exists and we proceed to find it using the algorithm from lines $26-35$. We will now prove the following claim which will complete the correctness proof of Algorithm~\ref{alg:findcycle}:
+        \begin{claim}\label{claim:findcycle}
+            The lines $26-35$ finds a valid cycle in $G$ if one exists.
+        \end{claim}
+        \begin{proof}
+            We know that the path from $u$ to $v$ passes through a cycle of negative weight since the distance between $u$ and $v$ decreased in the $n\textsuperscript{th}$ iteration. Now consider the vertex set $C$ of this cycle. The parent of each of vertex $c\in C$ also lies in $C$. Assume by contradiction that this is not the case. Then there exists a vertex $x\in C$ such that $p[x]\notin C$. Now, consider the path from $u$ to $v$. It is given by:
+            \begin{equation}
+                path(u, v) = path(u, x)\cup path(x, y)\cup path(y, v)
+            \end{equation}
+            Here, $y$ is the first vertex which is a part of cycle $C$ and is obtained by traversing on the ancestors of $v$ ($\{v, p[v], p[p[v]], \ldots\}$). Now, this path doesn't pass through any cycle of negative weight since $C$ isn't a part of this path. This is a contradiction to our assumption that exists a vertex $x\in C$ such that $p[x]\notin C$. Therefore $\forall c\in C, p[c]\in C$.\\
+            Now, consider the \texttt{for} loop on lines $26-28$, we iterate $n$ times on the descendents of $v$. This ancestor $v$ is now a part of the cycle since $G$ has $n$ vertices and after we reach $y$, all ancestors lie in $C$. Since $y$ is reached in $\leq n$ steps, the final vertex $v\in C$.\\
+            After we have arrived on the cycle $C$, we proceed to retrieve it. For this, we iterate backwards on the parent of the vertices in $C$ until we reach the starting vertex $v$ (lines $31-34$). The vertices added into $C$ are in the reverse order since we are iterating from child to parent and thus we reverse the set $C$ and return it.\\
+            Therefore we have shown that Algorithm~\ref{alg:findcycle} finds a valid cycle in $G$ if one exists. This completes the proof of the claim.
+        \end{proof}
+        Thus, using Claim~\ref{claim:findcycle} we have shown the correctness of Algorithm~\ref{alg:findcycle}. We will now compute the time and space complexities.\\
+
+        \textbf{Time and Space Complexities:} We use an additional space of $O(n)$ to store $p$ and the cycle $C$ and therefore the total space complexity is $O(n)$. To analyse the time complexity, we observe that the additional computation that we perform in lines $26-36$ are all bounded by $O(n)$ since we cannot have a cycle of length larger than $n$. Therefore the total time complexity is given by $O(n\times m)=O(n\times n^2)=O(n^3)$.\\
+
+        Therefore we have proposed a cubic time algorithm to retrive a cycle with negative weight in Algorithm~\ref{alg:findcycle} and have also argued its correctness.
+    \end{proof}
+\end{solution}
