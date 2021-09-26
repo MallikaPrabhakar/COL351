@@ -46,7 +46,7 @@
         \end{algorithmic}
         \end{algorithm}
     \end{proof}
-    \begin{proof}[Proof of correctness]\\
+    \begin{proof}[Proof of correctness]
         \textbf{Case 1:} Graph has a cycle\\
         If the graph of courses has a cycle, it implies that the courses can never be completed since the prerequisite of a course is dependent on the course. To check cycles in the graph, we use an O(V+E) time algorithm $Order$ made in question 2.1 which return an empty array $[]$ if graph contains a cycle since a topological order would not be possible. If the result of function $Order(G)$ is $[]$, we return -1 denoting completion of all courses is impossible.\\
         \\
