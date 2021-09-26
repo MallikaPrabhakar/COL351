@@ -1,9 +1,34 @@
 \begin{solution}{2.2}
     \begin{question}
-        insert question    
+        Given a set of $C$ courses, devise the most efficient algorithm to find minimum number of semesters needed to complete all $n$ courses. What is the time complexity of your algorithm? 
     \end{question}
     \tcblower{}
     \begin{proof}[Solution]
         Proof is left as an exercise.
+        
+        
+        \begin{algorithm}
+        \caption{Least number of semesters for completion}
+        \begin{algorithmic}
+        \Procedure{Semester}{$G$}
+        \State{$adjList \gets generateAdjList(G)$} \Comment{Creates an adjacency list in O(V+E) time}
+        \State{}
+        \State{$indegree \gets [0 for all v in V]$}
+        \State{$colour[node] \gets 0$ for all nodes} 
+        \EndProcedure
+        \end{algorithmic}
+        \end{algorithm}
+    \end{proof}
+    \begin{proof}[Proof of correctness]
+        %@TODO: correctness is boring
+    \end{proof}
+    \begin{proof}[Proof of termination]
+        
+    \end{proof}
+    \begin{proof}[Time Complexity]
+        The overall time complexity of the $Semester$ function becomes $O(V+E)$
+    \end{proof}
+    \begin{proof}[Space Complexity]
+        Space complexity is determined by size of $adjList$ adjacency list, $indegree$ array, $sem$ array and $q$ queue.In worst case, space complexity $=O(V+E)+O(V)+O(V)+O(V)=O(V+E)$
     \end{proof}
 \end{solution}
