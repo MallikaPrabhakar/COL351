@@ -46,12 +46,19 @@
         \end{algorithmic}
         \end{algorithm}
     \end{proof}
-    \begin{proof}[Proof of correctness]
-        
-        
-        
-        
-        
+    \begin{proof}[Proof of correctness]\\
+        \textbf{Case 1:} Graph has a cycle\\
+        If the graph of courses has a cycle, it implies that the courses can never be completed since the prerequisite of a course is dependent on the course. To check cycles in the graph, we use an O(V+E) time algorithm $Order$ made in question 2.1 which return an empty array $[]$ if graph contains a cycle since a topological order would not be possible. If the result of function $Order(G)$ is $[]$, we return -1 denoting completion of all courses is impossible.\\
+        \\
+        \textbf{Case 2:} Solution exists\\
+        Here, the invariant is that after every iteration of while loop, $\max(curr\_iter)\leq \max(previous\_iter) + 1$, i.e., the maximum number of semesters needed to complete the courses until the courses \textit{visited} until current index is not more than $1+$ maximum number of semesters needed for courses until the previous iteration\\
+        \textbf{Proof by induction}\\
+        Base case: The base case is true since in the first iteration, we update $sem[node]$ by 1 which will be $<2$ since all nodes in the queue had $sem[node]=1$.\\
+        Inductive step: Assume that the claim is true for $(i-1)\textsuperscript{th}$ iteration, consider the $i\textsuperscript{th}$ iteration. We notice that the nodes present in the queue have a value which is one of $\max(previous\_iter)$ or $\max(previous\_iter)-1$. Therefore, if the node that is updated is added in the queue, it will have a value $\leq\max(previous\_iter)+1$. Therefore, we have shown the inductive claim to be true for the $i\textsuperscript{th}$ iteration.\\
+        This completes the proof of induction and hence the invariant of the while loop.\\
+        We now show that each course is done as early as possible. From the claim of induction, we have shown that the maximum semesters needed until the $i\textsuperscript{th}$ iteration does not exceed $\max(previous\_iter) + 1$. Therefore, the new course is done in the same semester as $\max(previous\_iter)$ or in the next semester. In the case when it is done in the next semester, it could not have been done in an earlier semester since the indegree would have been $>0$.\\
+        Therefore we have shown that our algorithm returns the most optimal solution.
+
     \end{proof}
     \begin{proof}[Proof of termination]
         $Semester$ function ends if either the course graph is not a directed acyclic graph since the courses can never be completed or after completion of algorithm. For the algorithm, the initial steps take finite amount of time and $for$ loops are bound by $V$. for the $while$ loop, it will run until the $queue$ becomes empty. The algorithm effectively adds all $vertices$ in the $queue$ at different times when the $indegree$ of a node turns 0 which implies there can be no duplicate additions. Since an element is popped from the queue in every iteration of while loop, while loop runs are finite and bound by $V$. Hence the algorithm terminates.
