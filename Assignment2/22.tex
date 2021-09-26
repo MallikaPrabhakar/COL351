@@ -4,31 +4,70 @@
     \end{question}
     \tcblower{}
     \begin{proof}[Solution]
-        Proof is left as an exercise.
+        We have courses labeled 1 to n and we have to find the minimum number of semesters taken to complete the degree requirement. We first check if the graph is a DAG or not using function $Order$ in question 2.1. If a cycle exists, we can never complete degree requirement so we $return -1$ in that scenario. Else we use a $queue$ involving $indegree$ of all courses and assign semester to all courses in the array $sem$. The maximum value in $sem$ will be the minimum number of semesters needed to complete all the courses. 
         
-        
-        \begin{algorithm}
+        \begin{algorithm}[H]
         \caption{Least number of semesters for completion}
         \begin{algorithmic}
         \Procedure{Semester}{$G$}
+        \State{$existence \gets Order(G)$}\Comment{from 2.1}
+        \If{$existence=[]$} \Comment{no solution case}
+            \State{\Return{-1}}
+        \EndIf{}
         \State{$adjList \gets generateAdjList(G)$} \Comment{Creates an adjacency list in O(V+E) time}
-        \State{}
-        \State{$indegree \gets [0 for all v in V]$}
-        \State{$colour[node] \gets 0$ for all nodes} 
+        \State{$indegree \gets [0 $ for i in $range(size(V)+1)]$}
+        \State{$sem \gets [0 $ for i in $range(size(V)+1)]$} 
+        \State{$q \gets empty\_queue()$}
+        \For{$i$ in $adjList$} \Comment{calculate indegree for all vertices}
+            \For{$j$ in $adjList[i]$}
+                \State{$indegree[j]\gets indegree[j]+1$}
+            \EndFor{}
+        \EndFor{}
+        
+        \For{$i$ in range(1,size(V)+1)}  \Comment{initialise sem and fill the queue for indegree=0}
+            \If{$indegree[i]=0$}
+                \State{$sem[i]\gets 1$}
+                \State{$push(q,i)$}
+            \EndIf{}
+        \EndFor{}
+        
+        \While{$size(q) \neq 0$}
+            \State{$node \gets pop(q,0)$} \Comment{queue is FIFO}
+            \For{$neighbour$ in $adjList[node]$}
+                \State{$indegree[neighbour]\gets indegree[neighbour]-1$}
+                \If{$indegree[neighbour]=0$}
+                    \State{$sem[neighbour]\gets sem[node]+1$} \Comment{Pre-requisite in previous semester}
+                    \State{$push(q,neighbour)$}
+                \EndIf{}
+            \EndFor{}
+        \EndWhile{}
+        \State{\Return{$\max(sem)$}}
         \EndProcedure
         \end{algorithmic}
         \end{algorithm}
     \end{proof}
     \begin{proof}[Proof of correctness]
-        %@TODO: correctness is boring
-    \end{proof}
-    \begin{proof}[Proof of termination]
+        
+        
+        
+        
         
     \end{proof}
+    \begin{proof}[Proof of termination]
+        $Semester$ function ends if either the course graph is not a directed acyclic graph since the courses can never be completed or after completion of algorithm. For the algorithm, the initial steps take finite amount of time and $for$ loops are bound by $V$. for the $while$ loop, it will run until the $queue$ becomes empty. The algorithm effectively adds all $vertices$ in the $queue$ at different times when the $indegree$ of a node turns 0 which implies there can be no duplicate additions. Since an element is popped from the queue in every iteration of while loop, while loop runs are finite and bound by $V$. Hence the algorithm terminates.
+    \end{proof}
     \begin{proof}[Time Complexity]
-        The overall time complexity of the $Semester$ function becomes $O(V+E)$
+        Following are the time complexities for different parts-
+        \begin{itemize}
+            \item Time to make $adjList$: $O(V+E)$ (trivial)
+            \item Time to make $indegree$: $O(V)$ (trivial)
+            \item Time to make $sem$: $O(V)$ (trivial)
+            \item Time taken by $while$ loop: $O(V+E)$ 
+            \item Time taken by $max$ function: $O(V)$ (linear)
+        \end{itemize}
+        Time taken by while loop is $O(V+E)$ because for termination of algorithm, it has to go through every node and it's neighbours once. Hence the overall time complexity of the $Semester$ function becomes $O(V+E)$.
     \end{proof}
     \begin{proof}[Space Complexity]
-        Space complexity is determined by size of $adjList$ adjacency list, $indegree$ array, $sem$ array and $q$ queue.In worst case, space complexity $=O(V+E)+O(V)+O(V)+O(V)=O(V+E)$
+        Space complexity is determined by size of $adjList$ adjacency list, $indegree$ array, $sem$ array and $q$ queue.In worst case maximum size of queue is of $O(V)$, overall space complexity $=O(V+E)+O(V)+O(V)+O(V)=O(V+E)$
     \end{proof}
 \end{solution}
