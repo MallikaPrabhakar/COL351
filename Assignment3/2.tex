@@ -1,17 +1,60 @@
-\begin{solution}{Question 1}\label{ques:1}
+\begin{solution}{Question 2}\label{ques:2}
     \begin{question}
-        Question
+        The total net force on particle $j$, by Coulomb’s Law, is equal to
+        \begin{equation}
+          F_j = \sum_{i<j}\frac{C q_i q_j}{{(j-i)}^2} - \sum_{i>j}\frac{C q_i q_j}{{(j-i)}^2}
+        \end{equation}
+        Design an algorithm that computes all the forces $F_j$ in $O(n\log{n})$ time.
     \end{question}
     \tcblower{}
     \begin{proof}[Solution]
-        \begin{claim}\label{claim:q1}
-        \end{claim}
-        \begin{proof}
-        \end{proof}
-        \begin{algorithm}[H]
-            \caption{DP solution for partitioning}\label{alg:dp_q1}
-            \begin{algorithmic}[1]
-            \end{algorithmic}
-        \end{algorithm}
+      We will use polynomial multiplication to solve this question. Consider the polynomials:
+      \begin{equation}
+        \begin{split}
+          A(x) &= (0, q_1, q_2, \ldots, q_n)\\
+          B(x) &= \left(-\frac{1}{{(n-1)}^2}, -\frac{1}{{(n-2)}^2}, \ldots, -\frac{1}{1^2}, 0, \frac{1}{1^2}, \ldots, \frac{1}{{(n-2)}^2}, \frac{1}{{(n-1)}^2}\right)
+        \end{split}
+      \end{equation}
+      In the above representation, only the coefficients of $A(x), B(x)$ are shown. The degrees of $A(x)$ and $B(x)$ are $n$ and $2n-2$ respectively. Now, in the product $P(x) = A(x)\cdot B(x)$, consider the coefficient of $x^{j+n-1}$. To visualise this, we will write the polynomials as:
+      \begin{equation}
+        \begin{aligned}
+          A(x) &= &q_n x^n &+ \cdots + &q_{j+1} x^{j+1} &+ &q_j x^j &+ &q_{j-1} x^{j-1} &+ \cdots + q_1 x^1 + 0 x^0\\
+          B(x) &= \cdots + &-\frac{1}{{(n-j)}^2} x^{j-1} &+ \cdots + &-\frac{1}{1^2} x^{n-2} &+ &0 x^{n-1} &+ &\frac{1}{1^2} x^n &+ \cdots + \frac{1}{{(j-1)}^2} x^{j+n-2} \\&&&&&&&&&+ \cdots
+        \end{aligned}
+      \end{equation}
+      Multiplication of corresponding terms gives terms with power of $x$ as $j+n-1$, and thus formally, the coefficient of $x^{j+n-1}$ can be written as:
+      \begin{equation}\label{eq:coeff}
+        P(x)[j+n-1] = \sum_{k=1}^{n-j}{q_{j+k}\cdot -\frac{1}{k^2}} + 0 + \sum_{k=1}^{j-1}{q_{j-k}\cdot \frac{1}{k^2}}
+      \end{equation}
+      Where $P(x)[p]$ denotes the coefficient of $x^p$ in $P(x)$.\\
+      Equation~\ref{eq:coeff} can be rewritten as:
+      \begin{equation}\label{eq:F}
+        \begin{split}
+          P(x)[j+n-1] &= \sum_{i=j+k, k=1}^{n-j}{q_i\cdot -\frac{1}{{(j-1)}^2}} + \sum_{i=j-k, k=1}^{j-1}{q_i\cdot \frac{1}{{(j-1)}^2}}\\
+                      &= -\sum_{i=j+1}^n{\frac{q_i}{{(j-1)}^2}} + \sum_{i=1}^{j-1}{\frac{q_i}{{(j-1)}^2}}\\
+                      &= \sum_{i<j}{\frac{q_i}{{(j-1)}^2}} - \sum_{i>j}{\frac{q_i}{{(j-1)}^2}}\\
+                      &= \frac{F_j}{C q_j}\\
+          \implies F_j &= P(x)[j+n-1] \times C q_j
+        \end{split}
+      \end{equation}
+      Therefore, we have derived an alternate method for computing $F_j$. Since this involves computing product of polynomials, we can perform the polynomial product in $O(n\log{n})$ since both $A(x), B(x)$ are polynomials of degree $O(n)$. Once $C(x)$ has been computed, we can then compute $F_j$ in $O(1)$ for each $j$ by dividing the corresponding coefficient with $C q_j$. The exact algorithm is given as:
+      \begin{algorithm}[H]
+        \caption{Computing $F_j$ for $j\in \{1, 2, \ldots, n\}$}
+        \begin{algorithmic}[1]
+          \Procedure{Compute Forces}{$(q, n)$}
+            \State{$A \gets q$}
+            \State{$B \gets \left[-\frac{1}{{(n-1)}^2}, -\frac{1}{{(n-2)}^2}, \ldots, -\frac{1}{1^2}, 0, \frac{1}{1^2}, \ldots, \frac{1}{{(n-2)}^2}, \frac{1}{{(n-1)}^2}\right]$}
+            \State{$P \gets multiply(A, B)$}  \Comment{multiply $A(x)$ and $B(x)$ using FFT ``divide and conquer'' algo}
+            \State{$F \gets C[n:2n-1]$} \Comment{taking subarray corresponding to coefficients of $x^{j+n-1}$}
+            \For{$i \in [1,n]$} \Comment{1-indexed array}
+              \State{$F[i] \gets F[i]\times C q[i]$}
+            \EndFor{}
+            \State{\Return{F}}
+          \EndProcedure{}
+        \end{algorithmic}
+      \end{algorithm}
+      \textbf{Proof of Correctness:} The proof of correctness of the \textit{FFT Algorithm} has been discussed in the lectures. The correctness of lines $5-8$ has been proved from Equation~\ref{eq:F}.\\
+      \textbf{Time Complexity:} All operations except the \textit{FFT Algorithm} are $O(n)$ operations. The complexity of \textit{FFT Algorithm} has been shown to be $O(d\log{d})$ where $d$ is the degree of the polynomial. Since the degrees of $A(x), B(x)$ are $O(n)$, the \textit{FFT Algorithm} can be computed in $O(n\log{n})$ time.\\
+      Therefore, all forces $F_j$ can be computed in $O(n\log{n})$ time. This completes the design of the algorithm along with proof of correctness and time complexity.
     \end{proof}
 \end{solution}
