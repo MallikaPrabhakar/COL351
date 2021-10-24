@@ -3,6 +3,41 @@
         Prove that the graph $H = (V, E_H)$ can be computed from $G$ in $O(n^\omega)$ time, where $\omega$ is the exponent of matrix-multiplication.
     \end{question}
     \tcblower{}
-    \begin{proof}[Solution]
+    \begin{proof}[Proof]
+      Enumerate the vertices $V$ in $G$ as $\{1, 2, \ldots, |V| = n\}$ and let $A_G$ be the adjacency matrix of $G$. Consider the term $A_G^2$. From \textbf{Lemma 1} of Lecture 22, we know that $A_G^2$ is positive only if there exists a walk of length \textit{exactly} $2$. Therefore, we have the following claim:
+      \begin{claim}
+        The adjacency list for graph $H$ is given as $A_G+A_G^2 \succ 0$, where $A_G$ is adjacency matrix of $G$.
+      \end{claim}
+      \begin{proof}
+        From definition of $H$, we have that edges in graph $H$ consists of all edges of graph $G$ and end points of walks of length $2$. Therefore, $E_H$ has all edges of walks of length $1$ and $2$. In other words, ${(A_H)}_{ij}$ is positive only if there exists a walk of length $1$ or $2$ between nodes $i, j$. This can be formally written as:
+        \begin{equation}
+          \begin{split}
+            {(A_H)}_{ij} &= {(A_G)}_{ij} > 0 \vee {(A_G^2)}_{ij} > 0\\
+                         &= {(A_G)}_{ij} + {(A_G^2)}_{ij} > 0\\
+            \implies A_H &= A_G+A_G^2 \succ 0
+          \end{split}
+        \end{equation}
+      \end{proof}
+      Therefore, the algorithm for computing $A_H$ is:
+      \begin{algorithm}[H]
+        \caption{Computing $A_H$}
+        \begin{algorithmic}[1]
+          \Procedure{ComputeH}{$G$}
+            \State{$A_G \gets adjacency(G)$}
+            \State{$A_H \gets A_G + A_G^2$}
+            \State{$n \gets |V_G|$}
+            \For{$i, j \in [1, n] \times [1, n]$}
+              \If{${(A_H)}_{ij} > 0$}
+                \State{${(A_H)}_{ij} \gets 1$}
+              \Else{}
+                \State{${(A_H)}_{ij} \gets 0$}
+              \EndIf{}
+            \EndFor{}
+            \State{\Return{$graph(A_H)$}}
+          \EndProcedure{}
+        \end{algorithmic}
+      \end{algorithm}
+      \textbf{Time Complexity} Computing $A_G^2$ will take $O(n^\omega)$ time. All other steps take $O(n^2)$ time. We know that $\omega \geq 2$. Therefore, the overall time complexity of the algorithm will be $O(n^\omega)$.\\
+      Therefore, we have proposed an algorithm which computes the graph $H$ via its adjacency matrix in $O(n^\omega)$ time. This completes the proof.
     \end{proof}
 \end{solution}
