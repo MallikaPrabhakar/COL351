@@ -4,15 +4,11 @@
     \end{question}
     \tcblower{}
     \begin{proof}[Solution]
-        \begin{claim}\label{claim:q1}
-        \end{claim}
-        \begin{proof}
-        \end{proof}
-        \begin{algorithm}[H]
-            \caption{DP solution for partitioning}\label{alg:dp_q1}
-            \begin{algorithmic}[1]
-              \State{}
-            \end{algorithmic}
-        \end{algorithm}
+      Since $M$ is fairly large, we will assume that $p \approx M$ and that $M$ is a multiple of $n$. Since we have to show inequality, choosing the lower bound of $p$ works since the term only increases for larger $p$. Therefore, $rx\ \text{mod}\ p$ maps exactly to a set which is the same as $\{0, 2, \ldots, p-1 \approx M-1\}$ (from lectures 26, 27). Additionally, since we have assumed that $M$ is a multiple of $n$, we get that:
+      \begin{equation}
+        y\ \text{mod}\ n = \{0, 1, \ldots, n-1, 0, 1, \ldots, n-1, (M/n\ times)\ldots, 0, 1, \ldots, n-1\}
+      \end{equation}
+      Where $y$ is the mapping of $\{0, 2, \ldots, M-1\}$ via the function $rx \text{mod} p$. Now, each \textit{bucket} contains atleast $M/n$ elements. Therefore, taking $n$ elements from any of this bucket will give a maximum chain length of $n = \Theta(n)$. There are $n\cdot^{M/n}C_n$ such subsets of $U$. The above arguments are for $p \approx M$. If $p > M$, the number of such subsets will only increase.\\
+      Therefore, we have shown that there are \textit{atleast} $^{M/n}C_n$ such subsets of $U$ of size $n$ with maximum chain length in $H_r()$ is $\Theta(n)$.
     \end{proof}
 \end{solution}
