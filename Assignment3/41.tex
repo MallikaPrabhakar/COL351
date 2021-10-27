@@ -9,8 +9,32 @@
         \end{claim}
         \begin{proof}
         Total number of elements in the hashmap $H$ are $n$. Since it is a random distribution, for any element $x$, $Prob(H[x])$ being any number is same for all n numbers. Therefore $Prob(H[x]=i)=\frac{1}{n}$ is equal for all $i$ in $n$.\\
-        
+        Thus, we have that for any $k$,
+        \begin{equation}
+            \begin{split}
+                Prob(\text{any chain length} \geq k) &\leq\sum_{i=k}^n \binom{n}{i}\left(\frac{i}{n}\right)^i \left(1 - \frac{i}{n}\right)^{n-k}\\
+                                                 &\leq\sum_{i=k}^n \left(\frac{ne}{i}\right)^i\left(\frac{1}{n}\right)^i\\
+                                                 &= \left(\frac{e}{i}\right)^k\left(1 + \frac{e}{k} + \ldots \right)\\
+                                                 &= \left(\frac{e}{i}\right)^k \frac{1}{1-e/k}
+            \end{split}
+        \end{equation}
+        We now consider $k=\log{n}$ and obtain the following:
+        \begin{equation}
+            \begin{split}
+                Prob(\text{any chain length} \geq k) &\leq \frac{1}{n}
+            \end{split}
+        \end{equation}
+        We have used the following inequality above:
+        \begin{equation}
+            \begin{split}
+                \left( \frac{n}{i} \right)^i \leq \binom n i \leq \left( \frac{ne}{i} \right)^i            \end{split}
+        \end{equation}
+        Therefore, we have shown the bound for very large $n$. Hence proved
         \end{proof}
+        
+        
+        
+        
         
     \end{proof}
 \end{solution}
