@@ -1,18 +1,68 @@
-\begin{solution}{Question 1}\label{ques:1}
+\begin{solution}{Question 3(b)}\label{ques:3b}
     \begin{question}
-        Question
+      Argue that for any $x, y \in V$, $\displaystyle D_H(x, y) = \left\lceil\frac{D_G(x, y)}{2}\right\rceil$
     \end{question}
     \tcblower{}
     \begin{proof}[Solution]
-        \begin{claim}\label{claim:q1}
-        \end{claim}
-        \begin{proof}
-        \end{proof}
-        \begin{algorithm}[H]
-            \caption{DP solution for partitioning}\label{alg:dp_q1}
-            \begin{algorithmic}[1]
-              \State{}
-            \end{algorithmic}
-        \end{algorithm}
+      We will prove the given statement by first showing that there exists a path of length $\left\lceil\frac{D_G(x, y)}{2}\right\rceil$ for each $x, y$ in $H$. We will then prove that we cannot have a shorter path length in $H$.\\
+      \textit{Note:} For this and subsequent parts, we call edges which are directly in $G$ as edges of \textit{type $1$} and the other edges as edges of \textit{type $2$}.
+      \begin{claim}\label{claim:Dh}
+        For each $x, y \in V$, there exists a path of length $\left\lceil\frac{D_G(x, y)}{2}\right\rceil$ in graph $H$, corresponding to the shortest path in $G$.
+      \end{claim}
+      \begin{proof}
+        Let the shortest path between $x, y$ in $G$ be given as:
+        \begin{equation}
+          \begin{split}
+            P_G(x, y) &= \{x, a_1, a_2, \ldots, a_k, y\}\\
+            \implies D_G(x, y) &= k + 1
+          \end{split}
+        \end{equation}
+        We now have two cases, when $k$ is odd and when $k$ is even. For the case when $k$ is odd, we have:
+        \begin{equation}
+          \begin{split}
+            P_H(x, y) &= \{x, a_2, a_4, \ldots, a_{k-1}, y\}\\
+            \implies length(P_H(x, y)) &= \frac{k-1}{2} + 1\\
+                                       &= \frac{k + 1}{2}\\
+                                       &= \left\lceil\frac{D_G(x, y)}{2}\right\rceil
+          \end{split}
+        \end{equation}
+        When $k$ is even, we have:
+        \begin{equation}
+          \begin{split}
+            P_H(x, y) &= \{x, a_2, a_4, \ldots, a_k, y\}\ \text{($(a_k, y)$ is the only edge of type $1$)}\\
+            \implies length(P_H(x, y)) &= \frac{k}{2} + 1\\
+                                       &= \frac{(k + 1) + 1}{2}\\
+                                       &= \left\lceil\frac{D_G(x, y)}{2}\right\rceil
+          \end{split}
+        \end{equation}
+        Therefore we have shown the correctness of the claim for both cases of $k$.
+      \end{proof}
+      We will now show that there cannot exist a path between $x, y$ of shorter length in $H$.
+      \begin{claim}\label{claim:DhContradiction}
+        The shortest distance between $x, y$ is given exactly as $\left\lceil\frac{D_G(x, y)}{2}\right\rceil$
+      \end{claim}
+      \begin{proof}
+        We will prove the claim using contradiction. Assume that there exists a shorter path $Q_H(x, y)$:
+        \begin{equation}
+          \begin{split}
+            Q_H(x, y) &= \{x, b_1, b_2, \ldots, b_m, y\}\\
+            \implies length(Q_H(x, y)) &= m + 1 < \left\lceil\frac{D_G(x, y)}{2}\right\rceil\text{, from assumption}
+          \end{split}
+        \end{equation}
+        Consider the edges in $G$ corresponding to this path $Q_H(x, y)$:
+        \begin{equation}
+          \begin{split}
+            Q_G(x, y) &= \{x, c_1, b_1, c_2, b_2, \ldots, c_m, b_m, c_{m+1}, y\}\text{, $c_i$ may be the same as $b_i$}\\
+            \implies length(Q_G(x, y)) &\leq 2m + 2 < 2 \left\lceil\frac{D_G(x, y)}{2}\right\rceil\\
+            \implies length(Q_G(x, y)) &< \begin{cases}
+              D_G(x, y) + 1, & D_G(x, y)\ \text{is odd}\\
+              D_G(x, y), & D_G(x, y)\ \text{is even}
+            \end{cases}
+          \end{split}
+        \end{equation}
+        We know that $D_G(x, y)$ is the shortest path in $G$ between vertices $x, y$. Therefore, we have that such a path cannot exist if $D_G(x, y)$ is even and in the case when $D_G(x, y)$ is odd, we notice that the inequality in $length(Q_G(x, y))$ has an even number ($2m+2$) in the RHS\@. Therefore, the equality cannot hold in this case as well. Thus, we have arrived at a condradiction on the length of shortest $x, y$ path in $G$. Therefore, $\left\lceil\frac{D_G(x, y)}{2}\right\rceil$ is the shortest path in $H$.
+      \end{proof}
+      Thus, from Claim~\ref{claim:Dh} and Claim~\ref{claim:DhContradiction} we have shown that $D_H(x, y) = \left\lceil\frac{D_G(x, y)}{2}\right\rceil$.\\
+      Hence, proved.
     \end{proof}
 \end{solution}
