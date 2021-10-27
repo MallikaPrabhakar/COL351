@@ -1,18 +1,35 @@
-\begin{solution}{Question 1}\label{ques:1}
+\begin{solution}{Question 1}
     \begin{question}
         Question
     \end{question}
     \tcblower{}
     \begin{proof}[Solution]
-        \begin{claim}\label{claim:q1}
-        \end{claim}
-        \begin{proof}
-        \end{proof}
-        \begin{algorithm}[H]
-            \caption{DP solution for partitioning}\label{alg:dp_q1}
-            \begin{algorithmic}[1]
-              \State{}
-            \end{algorithmic}
-        \end{algorithm}
+      We propose the following algorithm for computing all-pairs-distances:
+      \begin{algorithm}[H]
+        \caption{Computing all-pairs-distances}\label{alg:all}
+        \begin{algorithmic}[1]
+          \Procedure{AllPairDistances}{$G$}
+            \State{$A_G \gets adjacency(G)$}
+            \State{$H \gets \text{\textsc{ComputeH}}(G)$}
+            \If{$H = G$}
+              \State{$D_G \gets A_G$}
+              \State{$D_G \gets$ all off-diagonal zero entries are set to $\infty$}
+              \State{\Return{$D_G$}}
+            \EndIf{}
+            \State{$D_H \gets \text{\textsc{AllPairDistances}}(H)$}
+            \State{$D_G \gets \text{\textsc{ComputeDg}}(G, D_H)$}
+            \State{\Return{$D_G$}}
+          \EndProcedure{}
+        \end{algorithmic}
+      \end{algorithm}
+      This is a recursive algorithm that we use to compute the all-pairs-shortest distances. To prove the same, we will prove the correctness of the algorithm using reverse induction on the depth of the recursive calls.\\
+
+      \textbf{Base Case} If $H$ is the same as $G$, then each component in $G$ is fully connected. Therefore, the distance matrix will be the same as the adjacency matrix and the off-diagonal entries that are $0$ will be $\infty$ since there is no path between such vertices.\\
+      \textbf{Inductive Step} We assume that it is true for depth $i+1$, now consider the call at depth $i$.\\
+      We have already shown the correctness of line $3, 10$ in Question~\ref{ques:3a} and Question~\ref{ques:3d} respectively. Additionally from the inductive assumption, we know that $D_H$ is indeed the distance of graph $H$. Therefore, our recursive algorithm is correct.\\
+
+      However, we still have to prove termination. To do the same, we notice that any two vertices that have a path between them have a path of length $< n$. Additionally, the distance halves at each step as proved in Question~\ref{ques:3a}. Therefore, the algorithm terminates in $O(\log{n})$ calls.\\
+      \textbf{Time Complexity} As stated above, the number of calls to \texttt{AllPairDistances} is $O(\log{n})$. Each call of the function takes $O(n^\omega)$ time as shown in Question~\ref{ques:3a} and Question~\ref{ques:3d}. Therefore, the total time complexity of the algorithm is $O(n^\omega \log{n})$.\\
+      This completes the algorithm along with proof of correctness and time complexity.
     \end{proof}
 \end{solution}
