@@ -3,16 +3,29 @@
         Question
     \end{question}
     \tcblower{}
-    \begin{proof}[Solution]
-        \begin{claim}\label{claim:q1}
-        \end{claim}
-        \begin{proof}
-        \end{proof}
-        \begin{algorithm}[H]
-            \caption{DP solution for partitioning}\label{alg:dp_q1}
-            \begin{algorithmic}[1]
-              \State{}
-            \end{algorithmic}
-        \end{algorithm}
+    \begin{proof}
+      We will first propose the algorithm and then prove its correctness and time complexity.
+      \begin{algorithm}[H]
+        \caption{Computing $D_G$ from $D_H$}\label{alg:dg}
+        \begin{algorithmic}[1]
+          \Procedure{ComputeDg}{$G, D_H$}
+            \State{$M \gets D_H \times adjacency(G)$}
+            \State{$D_G \gets init()$}
+            \For{$x \in V$}
+              \For{$y \in V$}
+                \If{$M(x, y) \geq \deg(G, y)\cdot D_H(x, y)$}
+                \State{$D_G(x, y) \gets 2 D_H(x, y)$}
+                \Else{}
+                  \State{$D_G(x, y) \gets 2 D_H(x, y) - 1$}
+                \EndIf{}
+              \EndFor{}
+            \EndFor{}
+            \State{\Return{$D_G$}}
+          \EndProcedure{}
+        \end{algorithmic}
+      \end{algorithm}
+      Algorithm~\ref{alg:dg} computes the matrix $D_G$ using the idea proven in Question~\ref{ques:33}. Therefore, from the proof given in Question~\ref{ques:33}, we can compute $D_G$.\\
+      \textbf{Time Complexity} Line $2$ in Algorithm~\ref{alg:dg} takes $O(n^\omega)$ time. The nested for loop takes $O(n^2)$ time since each iteration takes $O(1)$ time. Therefore the total running time is $O(n^\omega)$ ($\omega > 2$).\\
+      Therefore, we have used the proof of Question~\ref{ques:33} to arrive at an $O(n^\omega)$ solution for computing $D_G$. This completes the proof.
     \end{proof}
 \end{solution}
