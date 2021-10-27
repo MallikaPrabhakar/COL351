@@ -1,18 +1,16 @@
-\begin{solution}{Question 1}\label{ques:1}
+\begin{solution}{Question 4(a)}\label{ques:41}
     \begin{question}
-        Question
+        
     \end{question}
     \tcblower{}
     \begin{proof}[Solution]
         \begin{claim}\label{claim:q1}
+        Prob(max-chain-length in hash table of $S$ under hash-function $H(\cdot)\geq \log_2 n) \leq \frac{1}{n}$
         \end{claim}
         \begin{proof}
+        Total number of elements in the hashmap $H$ are $n$. Since it is a random distribution, for any element $x$, $Prob(H[x])$ being any number is same for all n numbers. Therefore $Prob(H[x]=i)=\frac{1}{n}$ is equal for all $i$ in $n$.\\
+        
         \end{proof}
-        \begin{algorithm}[H]
-            \caption{DP solution for partitioning}\label{alg:dp_q1}
-            \begin{algorithmic}[1]
-              \State{}
-            \end{algorithmic}
-        \end{algorithm}
+        
     \end{proof}
 \end{solution}
