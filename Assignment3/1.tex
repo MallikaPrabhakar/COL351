@@ -15,10 +15,12 @@
                     \If{$P_1[i]>P_1[i_1]$}
                         \State{$i_1\gets i$}
                     \EndIf{}
+                \EndFor{}
                 \ForAll{$i$ in $range(n_2)$} \Comment{leftmost point in $P_2$}
                     \If{$P_2[i]<P_2[i_2]$}
                         \State{$i_2\gets i$}
                     \EndIf{}
+                \EndFor{}
                 \State{$index_1\gets i_1,index_2\gets i_2$}
                 \State{$L\gets line joining i_1 and i_2 $}
                 \While{$L$ crosses any polygon} \Comment{upper tangent calculation}
@@ -29,64 +31,125 @@
                         \State{$index_2\gets(n_2+index_2-1)\mod n_2$} \Comment{$index_2$ moves up since counter-clockwise}
                     \EndWhile{}
                 \EndWhile{}
+                    
                 \State{$upper_1 \gets index_1, upper_2 \gets index_2$}
                 \State{$index_1\gets i_1,index_2\gets i_2$}
-                \State{$L\gets line joining i_1 and i_2 $}
-                \While{$L$ crosses any polygon} \Comment{lower tangent calculation}
-                    \While{$L$ crosses $P_2$}
-                        \State{$index_2\gets(index_2+1)\mod n_2$} \Comment{$index_2$ moves down since counter-clockwise}
-                    \EndWhile{}
-                    \While{$L$ crosses $P_1$}
-                        \State{$index_1\gets(n_1+index_1-1)\mod n_1$} \Comment{$index_1$ moves down since counter-clockwise}
-                    \EndWhile{}
-                \EndWhile{}
+                \State{$L\gets$ line joining $index_1$ and $index_2 $}
                 \algstore{cut-1}
             \end{algorithmic}
         \end{algorithm}
         \begin{algorithm}[H]
             \begin{algorithmic}[1]
-            \algrestore{cut-1}
+            \algrestore{cut-1}        
+                \While{$L$ crosses any polygon} \Comment{lower tangent calculation}
+                    \While{$L$ crosses $P_2$}
+                        \State{$index_2\gets(index_2+1)\mod n_2$} \Comment{$index_2$ moves down since counter-clockwise}
+                    \EndWhile{}
+                        
+                    \While{$L$ crosses $P_1$}
+                        \State{$index_1\gets(n_1+index_1-1)\mod n_1$} \Comment{$index_1$ moves down since counter-clockwise}
+                    \EndWhile{}
+                \EndWhile{}
+
                 \State{$lower_1 \gets index_1, lower_2 \gets index_2$}
-                \State{$Q'$ is initialised} \Comment{$Q'$ contains convex hull in a counter-clockwise manner}
-                \State{$Q'.add(P_1[upper_1])$}
+                \State{$Q$ is initialised} \Comment{$Q$ contains convex hull in a counter-clockwise manner}
+                \State{$Q.add(P_1[upper_1])$}
                 \State{$index \gets upper_1$}
                 \While{$index \neq lower_1$}
                     \State{$index \gets (index+1)\mod n_1$}
-                    \State{$Q'.add(P_1[index])$}
+                    \State{$Q.add(P_1[index])$}
                 \EndWhile{}
-                \State{$Q'.add(P_2[lower_2])$}
+                \State{$Q.add(P_2[lower_2])$}
                 \State{$index\gets lower_2$}
                 \While{$index \neq upper_2$}
                     \State{$index \gets (index+1)\mod n_2$}
-                    \State{$Q'.add(P_2[index])$}
+                    \State{$Q.add(P_2[index])$}
                 \EndWhile{}
-                \State{\Return{$Q'$}}
+                \State{\Return{$Q$}}
             \EndProcedure{}
             \end{algorithmic}
         \end{algorithm}
         \begin{algorithm}[H]
-            \caption{Merge algorithm for divide and conquer solution for convex hull} \label{alg:d_c_c_h_d}
-            \begin{algorithmic}
-            \Procedure{divide}{$P'$}
-            \If{$size(P')$}
-                \State{\Return{}}
-            
-            
-            
-            
-            
-            
+            \caption{Divide algorithm for divide and conquer solution for convex hull} \label{alg:d_c_c_h_d}
+            \begin{algorithmic}[1]
+            \Procedure{divide}{$P$} \Comment{$P$ is sorted according to x-coordinate}
+            \If{$size(P)\leq 5$}
+                \State{\Return{$basecase(P)$}}\Comment{base case algorithm is defined below}
+            \EndIf{}
+            \State{$P_1 \gets$ first half of $P$}
+            \State{$P_2 \gets$ second half of $P$}
+            \State{$P_1\_hull\gets divide(P_1)$}
+            \State{$P_2\_hull\gets divide(P_2)$}
+            \State{$Q\gets merge(P_1\_hull,P_2\_hull)$}
+            \State{\Return{$Q$}}
             \EndProcedure{}
-            
-            \Procedure{algorithm}{$P$}
-                \State{$sort(P)$} \Comment{sorted according to x-coordinate}
-                \State{$Q\gets divide(P)$}
-                \State{\Return{$Q$}}
-            \EndProcedure{}
-            
-            
-            
             \end{algorithmic}
         \end{algorithm}
+        \begin{algorithm}[H] 
+        \caption{base case for divide} \label{alg:d_c_c_b}
+            \begin{algorithmic}[1]
+                \Procedure{basecase}{$P$} \Comment{Because of less number of points, we directly check if an edge is a part of the convex hull or not}
+                    \State{initialise $set$} \Comment{Set of all points in the hull}
+                    \ForAll{$i$ in $range(size(P))$}
+                        \ForAll{$j$ in $range(i+1,size(P))$}
+                            \State{$p\gets P[i]$ and $q\gets P[j]$}
+                            \State{$a \gets p.y-q.y$}
+                            \State{$b \gets q.x-p.y$}
+                            \State{$c \gets p.x\times q.y-p.y \times q.x$}
+                            \State{$neg, pos\gets 0$}
+                            \ForAll{$k$ in $range(size(P))$}
+                                \State{check on which side of line does the point line}
+                                \State{increment $neg$ and/or $pos$ corresponding above}
+                            \EndFor{}
+                            \If{$pos=size(P)$ or $neg=size(P)$}
+                                \State{set.add(P[i])}
+                                \State{set.add(P[j])}
+                            \EndIf{}
+                        \EndFor{}
+                    \EndFor{}
+                    \State{$Q$ is initialised as list of $set$}
+                    \State{$middle\gets[0,0]$}
+                    \ForAll{$i in range(size(Q))$}
+                        \State{}
+                        \State{}
+                    \EndFor{}
+                    \State{}
+                \EndProcedure{}
+            \end{algorithmic}
+        \end{algorithm}
+        
+        \textbf{Proof of termination:}\\
+        \textit{Merge step:} given $P_1$ and $P_2$, they are disjoint and have finite number of points $n_2 and n_2$ which means that the for loop runs are finite. Using all the points in $P_1$ and $P_2$ we find the upper and lower tangent. After obtaining the tangents, we calculate a set of points $Q$ by iterating over at maximum $n_1+n_2$ points by using 2 while loops. $Q$ is the convex hull for the set $P_1\cup P_2$.\\
+        For calculating the upper and lower tangents, we use nested while loops. In our implementation of finding tangents, we slowly go through pairs by changing one point at a time if the line intersects a polygon. All possible pairs are finite in number and we use its subset which is finite as well. Hence it terminates.
+        \\
+        \textit{Divide step:} if $size(P)$ is $n$, then the number of times divide is performed is finite and of the order $O(\log n)$. It is finite as $n$ constantly gets divided into two parts and dividing stops at 5 or lesser number of points being considered. Base case computation also terminates in constant time (roughly small multiple of $5^3$ computations) since it can be computed using basic mathematical formulae.\\
+        \\
+        Following both merge and divide step explanations, the algorithm ultimately stop because divide step happens roughly $\log n$ times and every time the elements considered for merging are finite and not repeated. Hence the algorithm terminates.\\
+        \\
+        \textbf{Time complexity:}
+        We follow divide and conquer strategy by dividing $P$ into $P_1$ and $P_2$ almost equal halves. Base case computational time complexity is constant as mentioned before. At every level, we perform merge step. As discussed in Proof of termination, the main computations performed are calculating tangents and actual merging.\\
+        Merging takes $O(n)$ time in worst case scenario i.e. all points in $P_1$ and $P_2$ are considered. For tangent calculation, we start at leftmost and rightmost points and travel up (for upper tangent) and down (for lower tangent). We perform this travelling by going from one point in $P_1$ to one point in $P_2$ guaranteed by the for and while loops. In worst case, we have to go through all of $P_1$ and $P_2$ which takes $O(n)$ time.\\
+        Hence merging takes overall $O(n)$ time.
+        \begin{equation}
+            \begin{split}
+                T(n)= 2\times T(n/2)+O(n)
+            \end{split}
+        \end{equation}
+        Using master theorem, $a=2$ and $b=2$\\
+        $c=\log_b a = 1 $\\
+        Hence final time complexity of algorithm becomes: $O(n \log n)$\\
+        \\
+        \textbf{Proof of correctness:}
+        We follow a simple divide and conquer algorithm with base case as defined above for $size(P) \leq 5$. Following is the proof of correctness of the fore-mentioned algorithm using induction:\\
+        \textit{Base Case:}\\
+        
+        
+        \textit{Induction Step:}\\
+        We assume that the hypothesis is true for all $i < n$. Consider the merge step for $n$. The left and right hulls have sizes around $n/2$. The invariant of the merge function is that the points are returned in anti-clockwise order. We first compute the rightmost point in $P_1$ and the leftmost point in $P_2$.\\
+        Then, we find pair of points on the top of the hull so that the \textit{merged} hull is convex. To compute the same, we keep on moving in counter-clockwise order in $P_1$ until we find a pair of points such that the line is \textit{tangential} to $P_1$. We then check if this line is also \textit{tangential} to $P_2$ (by \textit{tangential}, we mean that the line doesn't cross the convex hull and intersects the polygon only at the vertex). If the line is not tangential \textit{tangential} to $P_2$, we move clockwise in $P_2$. From geometry, we get that we can find such a point by only considering the \textit{upper} half of the points in each of $P_1$ and $P_2$. Therefore, we won't visit a vertex again.\\
+        Similarly, we compute the lower pair of points by moving clockwise in $P_1$ and anti-clockwise in $P_2$.\\
+        Now, we know the \textit{topmost} and \textit{bottommost} indices in $P_1$ and $P_2$. We now take the points that lie between $upper_1$ and $lower_1$, as well as those that lie between $lower_2$ and $upper_2$, in this exact order (to maintain the invariant of returning the points in anti-clockwise order). This completes the merge step and hence the induction.\\
+        Therefore, we have proven the correctness of our algorithm.
+    
     \end{proof}
 \end{solution}
