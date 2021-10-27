@@ -108,12 +108,8 @@
                         \EndFor{}
                     \EndFor{}
                     \State{$Q$ is initialised as list of $set$}
-                    \State{$middle\gets[0,0]$}
-                    \ForAll{$i in range(size(Q))$}
-                        \State{}
-                        \State{}
-                    \EndFor{}
-                    \State{}
+                    \State{$sort(Q)$ in counter clockwise manner} 
+                    \State{\Return{$Q$}}
                 \EndProcedure{}
             \end{algorithmic}
         \end{algorithm}
@@ -142,7 +138,12 @@
         \textbf{Proof of correctness:}
         We follow a simple divide and conquer algorithm with base case as defined above for $size(P) \leq 5$. Following is the proof of correctness of the fore-mentioned algorithm using induction:\\
         \textit{Base Case:}\\
-        
+        We have a base case with number of points less than or equal to 5 because lines of 2 points are not polygons. We use the mathematical formula of finding in which direction does a point lie. If all points lie in same direction of the chosen line, the line(edge) is considered as a part of convex hull (by definition). \\
+        For one point, there is no existence of convex hull.\\
+        For two points, again, there is no existence of convex hull. (Algorithm returns the two points for namesake)\\
+        For three points, even if all three points are co-linear, they are added to both pos and neg using the formula for checking if all points lie on one side. Q returned is all 3 points.\\
+        For four points, algorithm decides pos and neg. The points are either co-linear (all four points returned), one point within a triangle, or a quadrilateral.\\
+        For five points, the resulting set $Q$ is returned similarly based on the mathematical formula.
         
         \textit{Induction Step:}\\
         We assume that the hypothesis is true for all $i < n$. Consider the merge step for $n$. The left and right hulls have sizes around $n/2$. The invariant of the merge function is that the points are returned in anti-clockwise order. We first compute the rightmost point in $P_1$ and the leftmost point in $P_2$.\\
