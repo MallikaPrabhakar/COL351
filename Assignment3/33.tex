@@ -1,18 +1,51 @@
-\begin{solution}{Question 1}\label{ques:3c}
+\begin{solution}{Question 3(c)}\label{ques:3c}
     \begin{question}
-        Question
+        Let $A_G$ be adjacency matrix of $G$, and $M = D_H \times A_G$. Prove that for any $x, y \in V$, the following holds:
+        \begin{equation}
+          D_G(x, y) = \begin{cases}
+            2D_H(x, y) & M(x, y) \geq \deg_G(y) \cdot D_H(x, y)\\
+            2D_H(x, y) - 1 & M(x, y) < \deg_G(y) \cdot D_H(x, y)
+          \end{cases}
+        \end{equation}
     \end{question}
     \tcblower{}
     \begin{proof}[Solution]
-        \begin{claim}\label{claim:q1}
-        \end{claim}
-        \begin{proof}
-        \end{proof}
-        \begin{algorithm}[H]
-            \caption{DP solution for partitioning}\label{alg:dp_q1}
-            \begin{algorithmic}[1]
-              \State{}
-            \end{algorithmic}
-        \end{algorithm}
+      From Question~\ref{ques:3b}, we know that $D_G(x, y)$ is equal to either of $2D_H(x, y)$ or $2D_H(x, y) - 1$. Therefore, we have two cases for when $D_G(x, y)$ is odd or even. We first consider the case when $D_G(x, y)$ is odd:
+      \begin{claim}
+        When $D_G(x, y)$ is odd, we have $M(x, y) < \deg_G(y) \cdot D_H(x, y)$
+      \end{claim}
+      \begin{proof}
+        Consider the closest neighbour $z_0$ of $y$. Since $D_G(x, y)$ is odd, we have that $D_H(x, z_0) + 1 = D_H(x, y)$. It is easy to see this from the path of the case when $k$ is even in Question~\ref{ques:3b} (the edge $(z_0, y)$ is the additional edge on the path from $x$ to $y$). We now show that for any other neighbour $z$ of $y$, $D_H(x, z)$ cannot be larger than $D_H(x, y)$. This is true since There exists an edge $(z_0, z)$ in $H$. Thus we have the following inequality:
+        \begin{equation}
+          \begin{split}
+            \sum_{z\in neighbour_G(y)} D_H(x, z) &= D_H(x, z_0) + D_H(x, z)\\
+                                                 &< D_H(x, y) + (\deg(y)-1)D_H(x, y)\\
+                                                 &< \deg(y)\cdot D_H(x, y)\\
+                                \implies M(x, y) &< \deg_G(y) \cdot D_H(x, y)
+          \end{split}
+        \end{equation}
+        This completes the proof of the claim.
+      \end{proof}
+      We will now prove the following claim for the even case:
+      \begin{claim}
+        When $D_G(x, y)$ is even, we have $M(x, y) \geq \deg_G(y) \cdot D_H(x, y)$
+      \end{claim}
+      \begin{proof}
+        We now consider the farthest neighbour $z_0$ of $y$. This is at a distance of atmost $D_H(x, y) + 1$. This is because there exists a path from $x$ to $y$ along with the edge $y, z_0$. Also, for any neighbour $z$, $D_H(x, z)$ cannot be smaller than $D_H(x, y)$. This is easy to prove via contradiction. Since, $D_G(x, y)$ is even, all edges in the path in $H$ are of type $2$. Therefore, if there was a path of shorter length, we would have a possible path containing an edge of type $1$, which leads to a contradiction. Therefore, we have the following:
+        \begin{equation}
+          \begin{split}
+            \sum_{z\in neighbour_G(y)} D_H(x, z) &\geq \deg_G(y) \cdot D_H(x, y)\\
+            \implies M(x, y) &\geq \deg_G(y) \cdot D_H(x, y)
+          \end{split}
+        \end{equation}
+        This completes the proof for theven case too.
+      \end{proof}
+      Therefore, for both cases, we have shown that the relations satisfied by $x, y$ are different. Thus, we can use this condition to determine the value of $D_G$ in terms of $D_H$. We restate the result:
+        \begin{equation}
+          D_G(x, y) = \begin{cases}
+            2D_H(x, y) & M(x, y) \geq \deg_G(y) \cdot D_H(x, y)\\
+            2D_H(x, y) - 1 & M(x, y) < \deg_G(y) \cdot D_H(x, y)
+          \end{cases}
+        \end{equation}
     \end{proof}
 \end{solution}
