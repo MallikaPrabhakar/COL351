@@ -7,9 +7,7 @@
         \begin{claim}\label{claim:q1}
         Prob(max-chain-length in hash table of $S$ under hash-function $H(\cdot)\geq \log_2 n) \leq \frac{1}{n}$
         \end{claim}
-        \begin{proof}
-        Total number of elements in the hashmap $H$ are $n$. Since it is a random distribution, for any element $x$, $Prob(H[x])$ being any number is same for all n numbers. Therefore $Prob(H[x]=i)=\frac{1}{n}$ is equal for all $i$ in $n$.\\
-        Thus, we have that for any $k$,
+        Total number of elements in the hashmap $H$ are $n$. Since it is a random distribution, for any element $x$, $Prob(H[x])$ being any number is same for all n numbers. Therefore $Prob(H[x]=i)=\frac{1}{n}$ is equal for all $i$ in $n$. Thus, we have that for any $k$,
         \begin{equation}
             \begin{split}
                 Prob(\text{any chain length} \geq k) &\leq\sum_{i=k}^n \binom{n}{i}\left(\frac{i}{n}\right)^i \left(1 - \frac{i}{n}\right)^{n-k}\\
@@ -43,11 +41,6 @@
             Prob(\text{any chain length} \geq \log{n}) \leq \frac{n}{\log{n}^{\log{n}}} \leq \frac{n}{n^2} \leq \frac{1}{n}
         \end{equation}
         Therefore, we have shown the bound for very large $n$. Hence proved
-        \end{proof}
-        
-        
-        
-        
-        
+
     \end{proof}
 \end{solution}
