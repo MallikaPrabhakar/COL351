@@ -23,13 +23,13 @@
         \item $S \cap A_i$ for all $A_i \in$ set $A_1, A_2, . . . , A_m$ is $\neq \phi$
     \end{enumerate}
     Check 1 is a constant order operation.\\
-    For check 2, in worst case scenario, $|A_i|=n \ \forall \ i$. Time to find intersection of all $A_{i}s$ and $S$ is $O(k \times n)$. Total time taken is $O(k \times n \times m)$\\
+    For check 2, in worst case scenario, $|A_i|=n \ \forall \ i$. Time to find intersection of all $A_{i}s$ and $S$ is $O(k \times n)$ by individual comparison of all elements. Total time taken is $O(k \times n \times m)$\\
     Total time taken for verification hence is $O(1)+O(nmk) = O(nmk)$ which is polynomial time.
     \end{proof}
     
-    \begin{claim}
+    \begin{theorem}
     A decision problem is an NP Class problem if it has a polynomial time verifier.
-    \end{claim}
+    \end{theorem}
     \begin{proof}
     As shown in \ref{claim:decprob} and \ref{claim:polytime}, Hitting set problem is a decision problem with a polynomial time verifier. Hence it is NP Class.
     \end{proof}
