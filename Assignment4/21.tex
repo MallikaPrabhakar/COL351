@@ -1,0 +1,38 @@
+\begin{solution}{Question 2.1}\label{ques:21}
+    \begin{question}
+    Consider a set $U = {u_1, . . . , u_n}$ of n elements and a collection $A_1, A_2, . . . , A_m$ of subsets of $U$. That is, $A_i \subseteq U $, for $ i \in [1, m]$. We say that a set $S \subseteq U$ is a hitting-set for the collection $A_1, A_2, . . . , A_m$ if $S \cap A_i$ is non-empty for each $i$. The Hitting-Set Problem (HS) for the input $(U, A_1, . . . , A_m)$ is to decide if there exists a hitting set $S \subseteq U$ of size at most $k$.\\
+    Prove that Hitting-Set problem is in NP class.
+
+    \end{question}
+    \tcblower{}
+    \begin{proof}[Solution]
+    \begin{claim} \label{claim:decprob}
+    Hitting-Set Problem is a decision problem.
+    \end{claim}
+    \begin{proof}
+    For hitting-set problem, we want to observe if the given set of subsets is a hitting set or not. Since the answer is a boolean yes or no, it is a decision problem.
+    \end{proof}
+    
+    \begin{claim} \label{claim:polytime}
+    Hitting-set problem can be verified in polynomial time 
+    \end{claim}
+    \begin{proof}
+    Given hitting-set $S$, to verify if it is a solution or not, we perform the following checks:
+    \begin{enumerate}
+        \item $|S| \leq k $
+        \item $S \cap A_i$ for all $A_i \in$ set $A_1, A_2, . . . , A_m$ is $\neq \phi$
+    \end{enumerate}
+    Check 1 is a constant order operation.\\
+    For check 2, in worst case scenario, $|A_i|=n \ \forall \ i$. Time to find intersection of all $A_{i}s$ and $S$ is $O(k \times n)$. Total time taken is $O(k \times n \times m)$\\
+    Total time taken for verification hence is $O(1)+O(nmk) = O(nmk)$ which is polynomial time.
+    \end{proof}
+    
+    \begin{claim}
+    A decision problem is an NP Class problem if it has a polynomial time verifier.
+    \end{claim}
+    \begin{proof}
+    As shown in \ref{claim:decprob} and \ref{claim:polytime}, Hitting set problem is a decision problem with a polynomial time verifier. Hence it is NP Class.
+    \end{proof}
+    
+    \end{proof}
+\end{solution}
