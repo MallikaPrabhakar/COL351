@@ -1,7 +1,34 @@
 \begin{solution}{Question 3.2}\label{ques:32}
     \begin{question}
+      Prove that Undirected Feedback Set Problem is NP-complete by reducing Vertex-cover to Undirected Feedback Set Problem.
     \end{question}
     \tcblower{}
-    \begin{proof}[Solution]
+    \begin{proof}
+      We will transform a given instance of vertex-cover problem to UFS as follows:
+      \begin{algorithm}[H]
+        \caption{Reducing Vertex-cover to UFS}
+        \begin{algorithmic}
+          \Procedure{ReduceVC}{$G, k$}
+            \State{$G' \gets emptyGraph()$}
+            \For{$e = \{u, v\}\in E(G)$}
+            \State{$G' \gets addEdge(G, \{u, x_{uv}\})$}
+            \State{$G' \gets addEdge(G, \{u, y_{uv}\})$}
+            \State{$G' \gets addEdge(G, \{v, x_{uv}\})$}
+            \State{$G' \gets addEdge(G, \{u, y_{uv}\})$}
+            \EndFor{}
+            \State{\Return{$G', k$}}
+          \EndProcedure{}
+        \end{algorithmic}
+      \end{algorithm}
+      Thus, we transform an instance of the vertex cover problem of $G, k$ to an instance of UFS problem of $G', k$. We notice that the transformation involves adding $4$ edges to $G'$ for each edge in $G$. Therefore the time complexity is linear in the size of $G$. We now show the correctness of the transformation:
+      \begin{claim}
+        Every `yes' instance of $VC(G, k)$ has a `yes' instance of $UFS(G', k)$ and vice versa
+      \end{claim}
+      \begin{proof}
+        ($\implies$) Consider any set $X$ which is a Vertex-cover of size atmost $k$ in $G$. We will now show that this set $X$ is also a UFS of size atmost $k$. Since $X$ is a vertex cover, then for every edge $e = \{u, v\}$ in $G$, atleast one of $u, v$ is in $X$. Therefore, for eacy cycle of size $4$ (there are only cycles of length $4$ and no other cycles) in $G'$, atleast one of the vertex has been removed. Therefore there is no more cycle remaining in $G'$. Thus, we have shown that every `yes' instance of $VC(G, k)$ has been mapped to a `yes' instance of $UFS(G', k)$ by using the same solution.\\
+        ($\impliedby$) Consider any set $Y$ which is a UFS of $G'$ with size atmost $k$. Now, we will generate a set $Y_m$ such that it contains no vertex of the kind $x_{uv}$ or $y_{uv}$ and has a cardinality atmost $|Y|$. To do this, we observe that for each cycle, there is atleast one vertex out of $u, v, x_{uv}, y_{uv}$ present in $Y$. If either of $x_{uv}, y_{uv}$ is present in $Y$, we define $Y_1$ as $Y \setminus \{w\} \cup \{u\}$ else we define $Y_1 = Y$. Therefore, $Y_1$ has a size $\leq |Y|$. We proceed similarly for each edge $e \in E(G)$ until we obtain $Y_{|E|} = Y_m$. Now, $Y_m$ is also a valid solution of $UFS(G', k)$ since none of the edges $x_{uv}, y_{uv}$ appear in any other cycle and the size of $Y_m \leq Y \leq k$. Additionally, all the vertices present in $Y_m$ are also present in $V(G)$. We now show that $Y_m$ is a vertex-cover of $G$. This is easy to see since atleast one of $u, v$ is present in $Y_m$ for each edge $e \in E(G)$. Therefore we have shown that any `yes' instance of $UFS(G', k)$ can be mapped to a `yes' instance of $VC(G, k)$.\\
+        Therefore we have shown both sides of the proof and this completes the proof of the claim.
+      \end{proof}
+      Now, we have shown a mapping for every problem of $VC(G, k)$ to $UFS(G', k)$ and have also shown that the `yes' instances of both problems are equivalent.Therefore, we have shown that $VC \leq_p UFS$ and since we know from lectures that $VC$ is NP-complete, $UFS$ is also an NP-complete problem. This completes the proof of showing NP-completeness of UFS by reducing Vertex-cover to UFS.
     \end{proof}
 \end{solution}

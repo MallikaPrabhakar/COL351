@@ -1,7 +1,19 @@
 \begin{solution}{Question 3.1}\label{ques:31}
     \begin{question}
+      Prove that Undirected Feedback Set Problem is in NP class.
     \end{question}
     \tcblower{}
-    \begin{proof}[Solution]
+    \begin{proof}
+      The algorithm for checking if a given set $X$ of size $k$ is a valid feedback set is as follows:
+      \begin{algorithm}[H]
+        \caption{Verifier for UFS}
+        \begin{algorithmic}
+          \Procedure{VerifyUFS}{$G, X, k$}
+            \State{$H \gets G \setminus X$}
+            \State{\Return{$|X| \leq k \wedge HasCycle(H)$}}
+          \EndProcedure{}
+        \end{algorithmic}
+      \end{algorithm}
+      We know that checking for a cycle can be done using $DFS$ or $BFS$ in time linear to the size of the graph ($O(n + m)$ time). We have also proved the correctness of the algorithm in the earlier part of the course. Therefore, we have shown that the UFS problem is in NP class since the verifier has a polynomial time algorithm.
     \end{proof}
 \end{solution}
